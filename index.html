@@ -695,47 +695,98 @@ pre.sql-box{direction:ltr;text-align:left;background:#0b0a10;border:1px solid va
         <div class="spinner"></div>در حال اتصال به سرور...
       </div>
 
-      <!-- Role Selection -->
-      <div style="font-size:10px;color:var(--t3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">نقش خود را انتخاب کن</div>
+      <!-- ══ نوع ورود: مدیر کل یا نمایندگی ══ -->
+      <div style="font-size:10px;color:var(--t3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px">نوع ورود را انتخاب کن</div>
 
-      <button class="role-btn-v2" id="role-admin" onclick="selectRole('admin')">
+      <button class="role-btn-v2 on" id="loginMode-master" onclick="selectLoginMode('master')">
         <div class="role-icon-wrap">👑</div>
         <div class="role-info">
-          <div class="role-title">مالک / Admin</div>
-          <div class="role-desc">دسترسی کامل به همه بخش‌ها</div>
+          <div class="role-title">مدیر کل / مالک</div>
+          <div class="role-desc">دسترسی به همه نمایندگی‌ها (تجمیعی)</div>
         </div>
-        <div class="role-check" id="check-admin"></div>
+        <div class="role-check" id="loginMode-check-master">✓</div>
       </button>
 
-      <button class="role-btn-v2" id="role-staff" onclick="selectRole('staff')">
-        <div class="role-icon-wrap">👷</div>
+      <button class="role-btn-v2" id="loginMode-branch" onclick="selectLoginMode('branch')">
+        <div class="role-icon-wrap">🏢</div>
         <div class="role-info">
-          <div class="role-title" style="color:var(--tl)">کارمند فابریکه</div>
-          <div class="role-desc">فروش، انبار، تولید</div>
+          <div class="role-title" style="color:var(--tl)">ورود نمایندگی</div>
+          <div class="role-desc">آیدی و پسورد اختصاصی نمایندگی</div>
         </div>
-        <div class="role-check" id="check-staff"></div>
+        <div class="role-check" id="loginMode-check-branch"></div>
       </button>
 
-      <!-- Divider -->
-      <div class="login-divider"><span>رمز عبور</span></div>
+      <!-- ══ جعبه مدیر کل ══ -->
+      <div id="login-master-box">
+        <!-- Role Selection -->
+        <div style="font-size:10px;color:var(--t3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:12px 0 10px">نقش خود را انتخاب کن</div>
 
-      <!-- Password -->
-      <div class="login-pass-wrap">
-        <input type="password" class="login-pass-input" id="loginPass"
-          placeholder="پسورد خود را وارد کنید..."
-          onkeydown="if(event.key==='Enter')doLogin()"/>
-        <button type="button" class="pass-toggle" id="showPassBtn" onclick="
-          var inp=document.getElementById('loginPass');
-          var btn=document.getElementById('showPassBtn');
-          if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
-          else{inp.type='password';btn.textContent='👁';}
-        ">👁</button>
+        <button class="role-btn-v2" id="role-admin" onclick="selectRole('admin')">
+          <div class="role-icon-wrap">👑</div>
+          <div class="role-info">
+            <div class="role-title">مالک / Admin</div>
+            <div class="role-desc">دسترسی کامل به همه بخش‌ها</div>
+          </div>
+          <div class="role-check" id="check-admin"></div>
+        </button>
+
+        <button class="role-btn-v2" id="role-staff" onclick="selectRole('staff')">
+          <div class="role-icon-wrap">👷</div>
+          <div class="role-info">
+            <div class="role-title" style="color:var(--tl)">کارمند فابریکه</div>
+            <div class="role-desc">فروش، انبار، تولید</div>
+          </div>
+          <div class="role-check" id="check-staff"></div>
+        </button>
+
+        <!-- Divider -->
+        <div class="login-divider"><span>رمز عبور</span></div>
+
+        <!-- Password -->
+        <div class="login-pass-wrap">
+          <input type="password" class="login-pass-input" id="loginPass"
+            placeholder="پسورد خود را وارد کنید..."
+            onkeydown="if(event.key==='Enter')doLogin()"/>
+          <button type="button" class="pass-toggle" id="showPassBtn" onclick="
+            var inp=document.getElementById('loginPass');
+            var btn=document.getElementById('showPassBtn');
+            if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+            else{inp.type='password';btn.textContent='👁';}
+          ">👁</button>
+        </div>
+
+        <!-- Login Button -->
+        <button class="login-btn-v2" onclick="doLogin()">
+          ورود مدیر کل &nbsp;🚀
+        </button>
       </div>
 
-      <!-- Login Button -->
-      <button class="login-btn-v2" onclick="doLogin()">
-        ورود به سیستم &nbsp;🚀
-      </button>
+      <!-- ══ جعبه نمایندگی ══ -->
+      <div id="login-branch-box" style="display:none">
+        <div class="login-divider"><span>آیدی و پسورد نمایندگی</span></div>
+        <div class="fg" style="margin-bottom:10px">
+          <label>آیدی نمایندگی (Branch ID)</label>
+          <input type="text" id="loginBranchId" placeholder="مثال: herat01" autocomplete="off"
+            style="width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:var(--tx);font-size:14px;font-family:inherit;outline:none;direction:ltr;text-align:left"/>
+        </div>
+        <div class="login-pass-wrap">
+          <input type="password" class="login-pass-input" id="loginBranchPass"
+            placeholder="پسورد نمایندگی..."
+            onkeydown="if(event.key==='Enter')doBranchLogin()"/>
+          <button type="button" class="pass-toggle" onclick="
+            var inp=document.getElementById('loginBranchPass');
+            if(inp.type==='password'){inp.type='text';this.textContent='🙈';}
+            else{inp.type='password';this.textContent='👁';}
+          ">👁</button>
+        </div>
+        <button class="login-btn-v2" onclick="doBranchLogin()"
+          style="background:linear-gradient(135deg,#1c8a99,#2ec4d4,#8ceef7);box-shadow:0 6px 24px rgba(46,196,212,.3)">
+          ورود به نمایندگی &nbsp;🏢
+        </button>
+        <p style="text-align:center;color:var(--t3);font-size:10px;margin-top:10px">
+          این نشست فقط به داده‌های همین نمایندگی دسترسی دارد
+        </p>
+      </div>
 
       <p id="role-hint" style="text-align:center;color:var(--t3);font-size:10px;margin-top:12px">
         ابتدا نقش خود را انتخاب کنید
@@ -757,9 +808,16 @@ pre.sql-box{direction:ltr;text-align:left;background:#0b0a10;border:1px solid va
 <div id="app" style="display:none">
   <div class="navbar">
     <button class="hamburger" onclick="toggleDrawer()">☰</button>
-    <div style="display:flex;align-items:center;gap:6px">
+    <div style="display:flex;align-items:center;gap:6px;min-width:0">
       <div class="nav-title" id="pageTitle">داشبورد</div>
       <div class="sync-dot" id="syncDot" title="اتصال Supabase"></div>
+    </div>
+    <!-- سوییچر نمایندگی — فقط برای مدیر کل -->
+    <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;justify-content:flex-end">
+      <select id="branchSwitcher" onchange="onBranchSwitch(this.value)" title="انتخاب نمایندگی"
+        style="display:none;max-width:140px;padding:5px 8px;background:var(--g3);border:1px solid rgba(212,168,67,.25);border-radius:8px;color:var(--gd);font-size:11px;font-weight:700;font-family:inherit;outline:none">
+      </select>
+      <div id="branchBadge" style="display:none;align-items:center;gap:4px;padding:4px 9px;background:var(--tl2);border:1px solid rgba(46,196,212,.3);border-radius:8px;color:var(--tl);font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:132px"></div>
     </div>
     <div class="rate-pill" id="rateDisplay" onclick="goPage('settings')">۶۸ AFN</div>
   </div>
@@ -1046,14 +1104,19 @@ pre.sql-box{direction:ltr;text-align:left;background:#0b0a10;border:1px solid va
         <div class="card">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
             <div class="ct" style="margin-bottom:0">📋 فهرست مواد خام</div>
-            <div style="display:flex;gap:6px">
-              <button class="btn bpri" onclick="openModal('modalEditStock')" style="font-size:11px;padding:6px 12px">✏️ ادیت / اضافه ماده</button>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn bpri" onclick="openMatForm()" style="font-size:11px;padding:6px 12px">+ افزودن ماده جدید</button>
+              <button class="btn bsec" onclick="openModal('modalEditStock')" style="font-size:11px;padding:6px 12px">✏️ ادیت گروهی</button>
             </div>
           </div>
           <div class="tw"><table>
-            <thead><tr><th>#</th><th>نام ماده</th><th>موجودی</th><th>قیمت فی واحد (؋)</th><th>ارزش کل</th><th>وضعیت</th></tr></thead>
-            <tbody id="stock-tbody"><tr><td colspan="6" style="text-align:center;padding:20px"><div class="spinner" style="margin:auto"></div></td></tr></tbody>
+            <thead><tr><th>#</th><th>نام ماده</th><th>موجودی</th><th>قیمت فی واحد (؋)</th><th>ارزش کل</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+            <tbody id="stock-tbody"><tr><td colspan="7" style="text-align:center;padding:20px"><div class="spinner" style="margin:auto"></div></td></tr></tbody>
           </table></div>
+          <div id="stock-branch-note" class="ib warn" style="display:none;font-size:10.5px;margin-top:10px">
+            ⚠️ الان در حالت «همه نمایندگی‌ها (تجمیعی)» هستی — اعداد جمع همه نمایندگی‌ها است.
+            برای ثبت یا اصلاح موجودی، از سوییچر بالای صفحه یک نمایندگی انتخاب کن.
+          </div>
         </div>
       </div>
 
@@ -1524,6 +1587,52 @@ notify pgrst, 'reload schema';</pre>
         <button class="btn bpri btn-full" onclick="saveCompanyInfo()">ذخیره اطلاعات شرکت ✓</button>
         <div id="company-msg" style="margin-top:8px"></div>
       </div>
+
+      <!-- ══ مدیریت نمایندگی‌ها — فقط مدیر کل ══ -->
+      <div class="card" id="card-branches" style="display:none">
+        <div class="ct">🏢 مدیریت نمایندگی‌ها | <span id="branches-count" style="color:var(--gd)">—</span></div>
+        <div class="ib info" style="font-size:10.5px">
+          💡 هر نمایندگی آیدی و پسورد اختصاصی خودش را دارد و فقط داده‌های خودش را می‌بیند.
+          داده‌های قدیمی (بدون <b>branch_id</b>) فقط در حالت «همه نمایندگی‌ها (تجمیعی)» دیده می‌شوند.
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+          <button class="btn bpri" onclick="openBranchModal()" style="font-size:11px;padding:7px 12px">+ افزودن نمایندگی جدید</button>
+          <button class="btn bsec" onclick="renderBranches(true)" style="font-size:11px;padding:7px 12px">🔄 بازخوانی</button>
+        </div>
+        <div id="branches-tbl"><div class="loading"><div class="spinner"></div>در حال بارگذاری...</div></div>
+        <details style="margin-top:10px">
+          <summary style="font-size:10.5px;color:var(--t2);cursor:pointer;font-weight:700">🧩 SQL راهنما (جدول branches و ستون branch_id)</summary>
+          <pre style="direction:ltr;text-align:left;font-size:9.5px;line-height:1.6;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:8px;padding:10px;margin-top:8px;overflow:auto">-- ۱) جدول نمایندگی‌ها
+create table if not exists branches (
+  id         bigserial primary key,
+  branch_id  text unique not null,
+  name       text not null,
+  password   text not null,
+  location   text,
+  created_at timestamptz default now()
+);
+
+-- ۲) ستون branch_id برای جدا شدن داده‌ها (روی هر جدولی که لازم داری)
+alter table purchases           add column if not exists branch_id text;
+alter table mat_stock           add column if not exists branch_id text;
+alter table production          add column if not exists branch_id text;
+alter table finished_goods      add column if not exists branch_id text;
+alter table sales               add column if not exists branch_id text;
+alter table orders              add column if not exists branch_id text;
+alter table order_items         add column if not exists branch_id text;
+alter table cash_ledger         add column if not exists branch_id text;
+alter table expenses            add column if not exists branch_id text;
+alter table employees           add column if not exists branch_id text;
+alter table employee_payments   add column if not exists branch_id text;
+alter table collection_payments add column if not exists branch_id text;
+alter table supplier_balances   add column if not exists branch_id text;
+alter table fixed_assets        add column if not exists branch_id text;
+alter table partners            add column if not exists branch_id text;
+alter table partner_transactions add column if not exists branch_id text;
+alter table collects            add column if not exists branch_id text;
+alter table tax_records         add column if not exists branch_id text;</pre>
+        </details>
+      </div>
       <div class="card">
         <div class="ct">💱 نرخ دالر روزانه</div>
         <div class="fg"><label>نرخ دالر (افغانی)</label><input type="number" inputmode="decimal" id="rateInput" value="68" inputmode="decimal"/></div>
@@ -1993,6 +2102,80 @@ notify pgrst, 'reload schema';</pre>
     <div class="modal-foot">
       <button class="btn bsec" onclick="closeModal('modalEditStock')">بستن</button>
       <button class="btn bpri" onclick="saveStockEdits()" id="edit-stock-btn">💾 ذخیره تغییرات ✓</button>
+    </div>
+  </div>
+</div>
+<!-- ══ MODAL افزودن / ویرایش ماده (مواد PU وفا) ══ -->
+<div class="modal-overlay" id="modalMatForm">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="mf-title">➕ افزودن ماده جدید</h3>
+      <button class="close-btn" onclick="closeModal('modalMatForm')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="mf-msg"></div>
+      <input type="hidden" id="mf-orig" value=""/>
+      <div class="fg"><label>نام ماده</label>
+        <input id="mf-name" placeholder="مثال: رنگ سیاه"/>
+      </div>
+      <div class="row2">
+        <div class="fg"><label>واحد</label>
+          <select id="mf-unit" onchange="onMatFormUnitChange()">
+            <option value="kg">کیلو</option>
+            <option value="piece">دانه</option>
+            <option value="meter">متر</option>
+            <option value="yard">پا</option>
+          </select>
+        </div>
+        <div class="fg"><label id="mf-qty-lbl">موجودی (کیلو)</label>
+          <input type="number" inputmode="decimal" id="mf-qty" step="0.1" min="0" placeholder="0" style="direction:ltr;text-align:right"/>
+        </div>
+      </div>
+      <div class="fg"><label id="mf-cost-lbl">قیمت فی کیلو (؋)</label>
+        <input type="number" inputmode="decimal" id="mf-cost" step="0.01" min="0" placeholder="0" style="direction:ltr;text-align:right"/>
+      </div>
+      <div class="ib info" style="font-size:10.5px">
+        🔄 بعد از ذخیره، فهرست مواد در «خرید مواد»، «مکسچر» و «تولید روزانه» فوراً آپدیت می‌شود.
+        نام ماده در ردیف‌های باز همان فرم‌ها هم اتومات اصلاح می‌شود.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn bsec" onclick="closeModal('modalMatForm')">انصراف</button>
+      <button class="btn bpri" id="mf-btn" onclick="submitMatForm()">ذخیره ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL نمایندگی (مدیر کل) ══ -->
+<div class="modal-overlay" id="modalBranch">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="mb-title">🏢 افزودن نمایندگی جدید</h3>
+      <button class="close-btn" onclick="closeModal('modalBranch')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="mb-msg"></div>
+      <input type="hidden" id="mb-id" value=""/>
+      <input type="hidden" id="mb-orig" value=""/>
+      <div class="fg"><label>نام نمایندگی</label>
+        <input id="mb-name" placeholder="مثال: نمایندگی هرات"/>
+      </div>
+      <div class="fg"><label>آیدی نمایندگی (Branch ID)</label>
+        <input id="mb-branch-id" placeholder="مثال: herat01" autocomplete="off" style="direction:ltr;text-align:left"/>
+      </div>
+      <div class="fg"><label>پسورد نمایندگی</label>
+        <input id="mb-pass" placeholder="پسورد اختصاصی این نمایندگی" autocomplete="off"/>
+      </div>
+      <div class="fg"><label>موقعیت</label>
+        <input id="mb-loc" placeholder="مثال: هرات، جاده مخابرات"/>
+      </div>
+      <div class="ib warn" style="font-size:10.5px">
+        ⚠️ آیدی و پسورد را به مسئول نمایندگی بده. با این اطلاعات فقط داده‌های همین نمایندگی دیده می‌شود.
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn bsec" onclick="closeModal('modalBranch')">انصراف</button>
+      <button class="btn bpri" id="mb-btn" onclick="submitBranch()">ذخیره ✓</button>
     </div>
   </div>
 </div>
@@ -3412,7 +3595,227 @@ function sbNoteFail(table,status,msg){
     console.error(`[Supabase] ❌ جدول «${table}» → HTTP ${status||"ERR"} :: ${String(msg||"").replace(/\s+/g," ").slice(0,300)}`);
   }catch(e){}
 }
+// ══════════════════════════════════════════════════
+// ══ نمایندگی‌ها (Branches) — جداسازی کامل داده‌ها ══
+// هر نوشتن (POST/PATCH) اتومات branch_id می‌گیرد و هر
+// خواندن (GET/DELETE/PATCH) فیلتر branch_id=eq.X می‌شود.
+// ══════════════════════════════════════════════════
+// جدول‌هایی که باید بین نمایندگی‌ها جدا شوند (whitelist)
+const BRANCH_SCOPED_TABLES=new Set([
+  "purchases","purchase_items","mat_stock","production","finished_goods","sales",
+  "orders","order_items","cash_ledger","expenses","employees","employee_payments",
+  "collection_payments","supplier_balances","fixed_assets","partners",
+  "partner_transactions","collects","tax_records","customers","supplier_payments",
+  "returns","production_waste","stock_moves","invoices","deals"
+]);
+const _branchColCache={};   // آیا جدول ستون branch_id دارد؟
+let _branches=[];           // فهرست نمایندگی‌ها (جدول branches)
+// نشست فعلی: id=null یعنی «همه نمایندگی‌ها (تجمیعی)» — نمایندگی لاک‌شده
+let currentBranch={id:null,name:"همه نمایندگی‌ها (تجمیعی)",locked:false};
+
+// آیدی نمایندگی فعال برای فیلتر/درج — null در حالت تجمیعی
+function branchScopeId(){
+  return currentBranch&&currentBranch.id?String(currentBranch.id):null;
+}
+function branchLabel(){ return currentBranch&&currentBranch.name?currentBranch.name:"همه نمایندگی‌ها"; }
+// بررسی وجود ستون branch_id در یک جدول (کش‌شده)
+async function tableHasBranchCol(table){
+  if(Object.prototype.hasOwnProperty.call(_branchColCache,table)) return _branchColCache[table];
+  let ok=false;
+  try{
+    const r=await fetch(`${SB_URL}/rest/v1/${table}?select=branch_id&limit=1`,{headers:SB_HEADERS});
+    ok=r.ok;
+    if(!ok) console.warn(`[branch] ستون branch_id در جدول «${table}» نیست — این جدول جدا نمی‌شود.`);
+  }catch(e){ ok=false; }
+  _branchColCache[table]=ok;
+  return ok;
+}
+function resetBranchColCache(){ Object.keys(_branchColCache).forEach(k=>delete _branchColCache[k]); }
+// تزریق branch_id در بدنه و فیلتر در آدرس (فقط اگر جدول ستون داشته باشد)
+async function applyBranchScope(table,method,body,params){
+  const bid=branchScopeId();
+  if(!bid) return {body,params};
+  if(!BRANCH_SCOPED_TABLES.has(table)) return {body,params};
+  let has=false;
+  try{ has=await tableHasBranchCol(table); }catch(e){ has=false; }
+  if(!has) return {body,params};
+  const filter="branch_id=eq."+encodeURIComponent(bid);
+  let p=params||"";
+  if(method!=="POST"){
+    if(!p) p="?"+filter;
+    else p=(p.charAt(0)==="?"?p:"?"+p)+"&"+filter;
+  }
+  let b=body;
+  if(body&&(method==="POST"||method==="PATCH")){
+    if(Array.isArray(body)){
+      b=body.map(row=>(row&&typeof row==="object")?Object.assign({},row,{branch_id:bid}):row);
+    } else if(typeof body==="object"){
+      b=Object.assign({},body,{branch_id:bid});
+    }
+  }
+  return {body:b,params:p};
+}
+// ── خواندن فیلدهای نمایندگی با هر نام ستونی که در دیتابیس باشد ──
+function branchIdOf(b){
+  if(!b) return "";
+  return String(b.branch_id??b.branchId??b.code??b.username??"").trim();
+}
+function branchNameOf(b){
+  if(!b) return "";
+  return String(b.name??b.branch_name??b.title??b.name_fa??"").trim();
+}
+function branchPassOf(b){
+  if(!b) return "";
+  return String(b.password??b.pass??b.pin??b.passcode??"");
+}
+function branchLocOf(b){
+  if(!b) return "";
+  return String(b.location??b.address??b.city??"").trim();
+}
+// ── بارگذاری فهرست نمایندگی‌ها ──
+async function loadBranches(force){
+  if(!force&&_branches.length) return _branches;
+  let rows=null;
+  try{ rows=await withTimeout(sbGet("branches","?select=*"),LOAD_FALLBACK_MS,"loadBranches"); }catch(e){ rows=null; }
+  if(!Array.isArray(rows)){
+    try{ rows=await sbGet("branches","?select=*"); }catch(e){ rows=null; }
+  }
+  _branches=Array.isArray(rows)?rows:[];
+  return _branches;
+}
+// ── کلیدهای settings مخصوص هر نمایندگی ──
+function branchSettingKey(base){
+  const bid=branchScopeId();
+  return bid?base+"_"+bid:base;
+}
+
+// ══════════════════════════════════════════════════
+// ══ مدیریت نمایندگی‌ها (تنظیمات — فقط مدیر کل) ══
+// ══════════════════════════════════════════════════
+async function renderBranches(force){
+  const card=document.getElementById("card-branches");
+  const box=document.getElementById("branches-tbl");
+  const isMaster=!!currentUser&&currentUser.master===true;
+  if(card) card.style.display=isMaster?"":"none";
+  if(!isMaster||!box) return;
+  if(force||!_branches.length){
+    box.innerHTML='<div class="loading"><div class="spinner"></div>در حال بارگذاری...</div>';
+    try{ await loadBranches(true); }catch(e){}
+  }
+  const cnt=document.getElementById("branches-count");
+  if(cnt) cnt.textContent=_branches.length+" نمایندگی";
+  if(!_branches.length){
+    box.innerHTML='<div class="ib warn">هنوز نمایندگی ثبت نشده — «+ افزودن نمایندگی جدید» را بزن</div>';
+    return;
+  }
+  box.innerHTML='<div class="tw"><table><thead><tr>'+
+    '<th>#</th><th>نام نمایندگی</th><th>آیدی</th><th>پسورد</th><th>موقعیت</th><th>عملیات</th>'+
+    '</tr></thead><tbody>'+
+    _branches.map((b,i)=>{
+      const bid=branchIdOf(b);
+      const active=currentBranch.id===bid;
+      return `<tr${active?' style="background:rgba(212,168,67,.06)"':''}>
+        <td style="color:var(--t3)">${i+1}</td>
+        <td style="font-weight:700;color:${active?'var(--gd)':'var(--tx)'}">${escHTML(branchNameOf(b)||"—")}${active?' ✓':''}</td>
+        <td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">${escHTML(bid||"—")}</td>
+        <td style="direction:ltr;text-align:left;font-family:monospace;font-size:11px">${escHTML(branchPassOf(b)?'•'.repeat(Math.min(8,branchPassOf(b).length)):"—")}</td>
+        <td style="color:var(--t2);font-size:11px">${escHTML(branchLocOf(b)||"—")}</td>
+        <td style="white-space:nowrap">
+          <button onclick="window._editBranch(${i})" style="background:var(--bl2);border:1px solid rgba(59,138,245,.3);color:var(--bl);border-radius:5px;padding:3px 7px;font-size:11px;cursor:pointer" title="ویرایش">✏️</button>
+          <button onclick="window._delBranch(${i})" style="background:var(--r2);border:1px solid rgba(240,82,82,.3);color:var(--rd);border-radius:5px;padding:3px 7px;font-size:11px;cursor:pointer" title="حذف">🗑️</button>
+        </td></tr>`;
+    }).join("")+'</tbody></table></div>';
+}
+window._editBranch=function(idx){ openBranchModal(idx); };
+window._delBranch=function(idx){ deleteBranch(idx); };
+
+function openBranchModal(idx){
+  const b=(idx===undefined||idx===null)?null:_branches[idx];
+  document.getElementById("mb-title").textContent=b?"✏️ ویرایش نمایندگی":"🏢 افزودن نمایندگی جدید";
+  document.getElementById("mb-id").value=(b&&b.id!==undefined&&b.id!==null)?b.id:"";
+  document.getElementById("mb-orig").value=b?branchIdOf(b):"";
+  document.getElementById("mb-name").value=b?branchNameOf(b):"";
+  document.getElementById("mb-branch-id").value=b?branchIdOf(b):"";
+  document.getElementById("mb-pass").value=b?branchPassOf(b):"";
+  document.getElementById("mb-loc").value=b?branchLocOf(b):"";
+  document.getElementById("mb-msg").innerHTML="";
+  const btn=document.getElementById("mb-btn");
+  if(btn){btn.disabled=false;btn.textContent="ذخیره ✓";}
+  openModal("modalBranch");
+}
+
+async function submitBranch(){
+  const msg=document.getElementById("mb-msg");
+  const btn=document.getElementById("mb-btn");
+  const rowId=(document.getElementById("mb-id").value||"").trim();
+  const orig=(document.getElementById("mb-orig").value||"").trim();
+  const name=(document.getElementById("mb-name").value||"").trim();
+  const bid=(document.getElementById("mb-branch-id").value||"").trim().replace(/\s+/g,"");
+  const pass=(document.getElementById("mb-pass").value||"");
+  const loc=(document.getElementById("mb-loc").value||"").trim();
+  if(!name){ msg.innerHTML='<div class="ib err">نام نمایندگی الزامی است</div>'; return; }
+  if(!bid){ msg.innerHTML='<div class="ib err">آیدی نمایندگی (Branch ID) الزامی است</div>'; return; }
+  if(!pass){ msg.innerHTML='<div class="ib err">پسورد نمایندگی الزامی است</div>'; return; }
+  const dupe=_branches.some(b=>branchIdOf(b).toLowerCase()===bid.toLowerCase() &&
+    (rowId?String(b.id??"")!==String(rowId):branchIdOf(b).toLowerCase()!==orig.toLowerCase()));
+  if(dupe){ msg.innerHTML='<div class="ib err">این آیدی نمایندگی قبلاً ثبت شده — آیدی دیگری انتخاب کن</div>'; return; }
+  btn.disabled=true; btn.textContent="در حال ذخیره...";
+  window._lastSBError=null;
+  const body={branch_id:bid,name,password:pass,location:loc};
+  let res=null, ok=false;
+  try{
+    if(rowId){
+      res=await sbPatch("branches",body,`?id=eq.${encodeURIComponent(rowId)}`);
+      ok=res!==null;
+    } else {
+      res=await sbPost("branches",body);
+      ok=res!==null;
+    }
+  }catch(e){ console.error("[submitBranch]",e); ok=false; }
+  btn.disabled=false; btn.textContent="ذخیره ✓";
+  if(!ok){ msg.innerHTML=sbErrorHTML("خطا در ذخیره نمایندگی — جدول branches را بساز (SQL راهنما)"); return; }
+  msg.innerHTML='<div class="ib ok">✅ ذخیره شد</div>';
+  try{ await loadBranches(true); }catch(e){}
+  // اگر نمایندگی فعال تغییر نام داد، هدر هم آپدیت شود
+  if(currentBranch.id && (currentBranch.id===orig || currentBranch.id===bid)){
+    const nb=_branches.find(x=>branchIdOf(x)===currentBranch.id);
+    if(nb) currentBranch.name=branchNameOf(nb)||currentBranch.id;
+  }
+  renderBranchUI();
+  await renderBranches();
+  setTimeout(()=>{ try{ closeModal("modalBranch"); }catch(e){} },700);
+}
+
+async function deleteBranch(idx){
+  const b=_branches[idx];
+  if(!b) return;
+  const bid=branchIdOf(b);
+  const nm=branchNameOf(b)||bid||"—";
+  if(!confirm(`نمایندگی «${nm}» حذف شود؟\n\nداده‌های ثبت‌شده (خرید، فروش، تولید…) حذف نمی‌شوند و در حالت «همه نمایندگی‌ها» باقی می‌مانند.`)) return;
+  window._lastSBError=null;
+  let res=null;
+  if(b.id!==undefined&&b.id!==null) res=await sbDelete("branches",`?id=eq.${encodeURIComponent(b.id)}`);
+  else res=await sbDelete("branches",`?branch_id=eq.${encodeURIComponent(bid)}`);
+  if(res===null){ alert("خطا در حذف نمایندگی\n\n"+(window._lastSBError||"")); return; }
+  showSaved();
+  await loadBranches(true);
+  // اگر نمایندگی حذف‌شده فعال بود، به حالت تجمیعی برگرد
+  if(currentBranch.id===bid){
+    currentBranch={id:null,name:"همه نمایندگی‌ها (تجمیعی)",locked:false};
+    renderBranchUI();
+    await reloadBranchData();
+  } else {
+    renderBranchUI();
+    await renderBranches();
+  }
+}
+
 async function sb(table, method="GET", body=null, params=""){
+  // ── تزریق اتومات branch_id (جداسازی نمایندگی‌ها) ──
+  try{
+    const sc=await applyBranchScope(table,method,body,params);
+    body=sc.body;params=sc.params;
+  }catch(e){ console.error("[branch] scope:",e); }
   const url=`${SB_URL}/rest/v1/${table}${params}`;
   const opts={method,headers:{
     "apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,
@@ -3551,9 +3954,16 @@ async function saveSuppBalance(suppId, suppName, balUsd, balAfn){
   });
 
   try{
-    // اول چک کن رکورد هست؟
+    // اول چک کن رکورد هست؟ (فیلتر branch_id اگر جدول ستون داشته باشد)
+    const bid = branchScopeId();
+    const scoped = bid ? await tableHasBranchCol("supplier_balances") : false;
+    const bFilter = scoped ? `&branch_id=eq.${encodeURIComponent(bid)}` : "";
+    // اگر جدول ستون branch_id دارد، به بدنه هم اضافه می‌شود
+    const scopedBody = scoped
+      ? JSON.stringify({supplier_id:suppId,supplier_name:suppName,balance_usd:+balUsd||0,balance_afn:+balAfn||0,updated_at:new Date().toISOString(),branch_id:bid})
+      : body;
     const checkRes = await fetch(
-      `${SB_URL}/rest/v1/supplier_balances?supplier_id=eq.${suppId}`,
+      `${SB_URL}/rest/v1/supplier_balances?supplier_id=eq.${encodeURIComponent(suppId)}${bFilter}`,
       { headers }
     );
     const existing = await checkRes.json();
@@ -3562,14 +3972,14 @@ async function saveSuppBalance(suppId, suppName, balUsd, balAfn){
     if(existing && existing.length > 0){
       // رکورد هست → PATCH
       saveRes = await fetch(
-        `${SB_URL}/rest/v1/supplier_balances?supplier_id=eq.${suppId}`,
-        { method:"PATCH", headers, body }
+        `${SB_URL}/rest/v1/supplier_balances?supplier_id=eq.${encodeURIComponent(suppId)}${bFilter}`,
+        { method:"PATCH", headers, body:scopedBody }
       );
     } else {
       // رکورد نیست → POST
       saveRes = await fetch(
         `${SB_URL}/rest/v1/supplier_balances`,
-        { method:"POST", headers:{ ...headers, "Prefer":"return=minimal" }, body }
+        { method:"POST", headers:{ ...headers, "Prefer":"return=minimal" }, body:scopedBody }
       );
     }
 
@@ -3588,6 +3998,10 @@ async function saveSuppBalance(suppId, suppName, balUsd, balAfn){
 
 // upsert عمومی (برای جاهای دیگر)
 async function sbUpsert(table,body){
+  try{
+    const sc=await applyBranchScope(table,"POST",body,"");
+    body=sc.body;
+  }catch(e){}
   const url=`${SB_URL}/rest/v1/${table}`;
   try{
     const r=await fetch(url,{
@@ -3611,12 +4025,46 @@ function setSyncOn(){ document.getElementById("syncDot")?.classList.remove("off"
 // ── Static data ──
 const CUSTOMERS=[];  // پیش‌فرض خالی — فقط از Supabase (settings.customers_data) پر می‌شود
 const SUPPLIERS=[];   // پیش‌فرض خالی — فقط با «+ افزودن» و ذخیره در Supabase
-const MATS=["دی‌اوپی (DOP)","ریزن","کرش سیاه","کرش آبی","کرش چاکلیتی","کرش براون","کرش سفید","اشترک","تیتانیوم","لایت","ای سی (AC)","پلاستیک (۹/۱۲)","پلاستیک (۱۱/۱۴)","پلاستیک (۱۲/۱۴)","بکل","نگینه"];
+// ── مواد اولیه پیش‌فرض وفا (PU) — فهرست زنده از انبار (mat_stock) هم به آن اضافه می‌شود ──
+const MATS=["رنگ سیاه","پولی کمیسان","کاتلیز","ایزو کمیسان","امسی","اسید","ریلیز"];
 const RECIPES={
-  استاندارد:[{m:"دی‌اوپی (DOP)",q:0.8},{m:"ریزن",q:0.3},{m:"تیتانیوم",q:0.05},{m:"ای سی (AC)",q:0.1},{m:"کرش سیاه",q:0.2}],
-  ویژه:[{m:"دی‌اوپی (DOP)",q:0.9},{m:"ریزن",q:0.35},{m:"تیتانیوم",q:0.06},{m:"ای سی (AC)",q:0.12},{m:"کرش سیاه",q:0.25}],
-  کودکانه:[{m:"دی‌اوپی (DOP)",q:0.6},{m:"ریزن",q:0.2},{m:"تیتانیوم",q:0.04},{m:"ای سی (AC)",q:0.08},{m:"کرش سیاه",q:0.15}],
+  استاندارد:[{m:"پولی کمیسان",q:0.5},{m:"ایزو کمیسان",q:0.5},{m:"کاتلیز",q:0.02},{m:"امسی",q:0.05},{m:"رنگ سیاه",q:0.1},{m:"ریلیز",q:0.01},{m:"اسید",q:0.01}],
+  ویژه:[{m:"پولی کمیسان",q:0.55},{m:"ایزو کمیسان",q:0.55},{m:"کاتلیز",q:0.025},{m:"امسی",q:0.06},{m:"رنگ سیاه",q:0.12},{m:"ریلیز",q:0.012},{m:"اسید",q:0.01}],
 };
+
+// ── مواد پنهان‌شده (حذف‌شده از فهرست پیش‌فرض) — در settings ذخیره می‌شود ──
+let _hiddenMats=new Set();
+const HIDDEN_MATS_KEY="hidden_mats";
+async function loadHiddenMats(){
+  _hiddenMats=new Set();
+  try{
+    const key=branchSettingKey(HIDDEN_MATS_KEY);
+    const rows=await sbGet("settings",`?key=eq.${encodeURIComponent(key)}`)||[];
+    const raw=rows[0]?.value;
+    if(raw){
+      const arr=JSON.parse(raw);
+      if(Array.isArray(arr)) _hiddenMats=new Set(arr.map(String));
+    }
+  }catch(e){}
+  return _hiddenMats;
+}
+async function saveHiddenMats(){
+  const key=branchSettingKey(HIDDEN_MATS_KEY);
+  const val=JSON.stringify([..._hiddenMats]);
+  try{
+    const qs=`?key=eq.${encodeURIComponent(key)}`;
+    const existing=await sbGet("settings",qs)||[];
+    if(existing.length>0) return (await sbPatch("settings",{value:val,updated_at:new Date().toISOString()},qs))!==null;
+    return (await sbPost("settings",{key,value:val}))!==null;
+  }catch(e){ return false; }
+}
+// فهرست زنده مواد: پیش‌فرض‌های وفا (MATS) + هر ماده‌ای که در انبار (mat_stock) رکورد دارد
+function liveMatNames(){
+  const set=new Set();
+  MATS.forEach(m=>{ if(m&&!_hiddenMats.has(m)) set.add(m); });
+  Object.keys(S.stockMap||{}).forEach(m=>{ if(m&&!_hiddenMats.has(m)) set.add(m); });
+  return [...set];
+}
 const CASH_IN=["وصول از مشتری","پیش‌پرداخت از مشتری","سرمایه شریک","قرض دریافتی","سایر ورودی"];
 // انواع پایه خروجی صندوق — منوی «نوع پرداخت» از همین فهرست ساخته می‌شود
 const CASH_OUT_KIND=[
@@ -3653,9 +4101,49 @@ function showToast(msg){
 // ── State ──
 let S={usdRate:68,stockMap:{},suppMap:{}};
 let currentUser=null,selectedRole=null;
+// نوع ورود: "master" = مدیر کل (تجمیعی) | "branch" = نمایندگی
+let loginMode="master";
 
 // ── Login ──
 const PASS_DEFAULT={admin:"Admin1234",staff:"Staff1234"};
+// صفحه‌های در دسترس نشست نمایندگی — همه بخش‌ها به‌جز «تنظیمات» (مخصوص مدیر کل)
+const BRANCH_PAGES=["dash","sales","orders","products","buy","prod","batch","stock","cust","collect","supp","cash","assets","report","reports_more","expenses","emp","tax","cheque","partners"];
+
+// انتخاب نوع ورود: مدیر کل (تجمیعی) یا نمایندگی (لاک‌شده)
+function selectLoginMode(m){
+  loginMode=m;
+  const isBranch=m==="branch";
+  const mBtn=document.getElementById("loginMode-master");
+  const bBtn=document.getElementById("loginMode-branch");
+  if(mBtn) mBtn.className="role-btn-v2"+(isBranch?"":" on");
+  if(bBtn) bBtn.className="role-btn-v2"+(isBranch?" on-tl":"");
+  const cm=document.getElementById("loginMode-check-master");
+  const cb=document.getElementById("loginMode-check-branch");
+  if(cm) cm.textContent=isBranch?"":"✓";
+  if(cb) cb.textContent=isBranch?"✓":"";
+  const mBox=document.getElementById("login-master-box");
+  const bBox=document.getElementById("login-branch-box");
+  if(mBox) mBox.style.display=isBranch?"none":"";
+  if(bBox) bBox.style.display=isBranch?"":"none";
+  const hint=document.getElementById("role-hint");
+  if(hint) hint.textContent=isBranch?"آیدی و پسورد نمایندگی را وارد کن":"ابتدا نقش خود را انتخاب کنید";
+  const err=document.getElementById("loginErr"); if(err) err.style.display="none";
+  try{ (isBranch?document.getElementById("loginBranchId"):document.getElementById("loginPass")).focus(); }catch(e){}
+}
+
+// شروع نشست (مشترک بین ورود مدیر کل و ورود نمایندگی)
+function startSession(){
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("app").style.display="block";
+  window._sbFailed=[]; // نشست تازه — خطاهای قبلی جداول پاک می‌شود
+  try{ renderBranchUI(); }catch(e){ console.error("[session] branchUI:",e&&e.message||e); }
+  armDashWatchdog();
+  Promise.resolve().then(initApp).catch(e=>{
+    console.error("[initApp] ❌",e&&(e.stack||e.message)||e);
+    try{ const l=document.getElementById("loginLoading"); if(l) l.style.display="none"; }catch(_e){}
+    try{ renderDashEmpty("خطا در راه‌اندازی برنامه — مقادیر صفر نمایش داده شد"); }catch(_e){}
+  });
+}
 
 function selectRole(r){
   selectedRole=r;
@@ -3692,7 +4180,12 @@ async function doLogin(){
     if(row&&row.value) correctPass=row.value;
   }
   if(p===correctPass){
+    // مدیر کل → حالت تجمیعی (همه نمایندگی‌ها)
+    currentBranch={id:null,name:"همه نمایندگی‌ها (تجمیعی)",locked:false};
+    try{ await loadBranches(true); }catch(e){}
     currentUser={role:selectedRole,
+      master:selectedRole==="admin",
+      branch:false,
       name:selectedRole==="admin"?"مالک فابریکه":"کارمند فابریکه",
       av:selectedRole==="admin"?"م":"ک",
       color:selectedRole==="admin"?"var(--gd)":"var(--tl)",
@@ -3700,46 +4193,191 @@ async function doLogin(){
         ?["dash","sales","orders","products","buy","prod","batch","stock","cust","collect","supp","cash","assets","report","settings"]
         :["dash","sales","orders","products","buy","prod","batch","stock","cust","collect","supp"]
     };
-    document.getElementById("loginPage").style.display="none";
-    document.getElementById("app").style.display="block";
-    window._sbFailed=[]; // نشست تازه — خطاهای قبلی جداول پاک می‌شود
-    // داشبورد از همین حالا فالبک ۵ ثانیه‌ای دارد؛ initApp هم داخل try/catch اجرا می‌شود
-    armDashWatchdog();
-    Promise.resolve().then(initApp).catch(e=>{
-      console.error("[initApp] ❌",e&&(e.stack||e.message)||e);
-      try{ loadingEl.style.display="none"; }catch(_e){}
-      try{ renderDashEmpty("خطا در راه‌اندازی برنامه — مقادیر صفر نمایش داده شد"); }catch(_e){}
-    });
+    startSession();
   } else {
     showLoginErr("پسورد اشتباه است");
     document.getElementById("loginPass").value="";
   }
 }
+
+// ورود نمایندگی — آیدی + پسورد از جدول branches
+async function doBranchLogin(){
+  const idEl=document.getElementById("loginBranchId");
+  const passEl=document.getElementById("loginBranchPass");
+  const bid=(idEl?.value||"").trim();
+  const p=(passEl?.value||"");
+  if(!bid){showLoginErr("آیدی نمایندگی را وارد کن!");return;}
+  if(!p){showLoginErr("پسورد نمایندگی را وارد کن!");return;}
+  const loadingEl=document.getElementById("loginLoading");
+  loadingEl.style.display="flex";
+  document.getElementById("loginErr").style.display="none";
+  let rows=[];
+  try{
+    rows=await withTimeout(sbGet("branches","?select=*"),LOAD_FALLBACK_MS,"doBranchLogin:branches")||[];
+  }catch(e){ rows=[]; }
+  loadingEl.style.display="none";
+  if(!Array.isArray(rows)||!rows.length){
+    showLoginErr("جدول «branches» در دیتابیس نیست یا خالی است — مدیر کل باید نمایندگی بسازد (SQL راهنما در تنظیمات)");
+    return;
+  }
+  _branches=rows;
+  const wanted=bid.toLowerCase();
+  const b=rows.find(x=>branchIdOf(x).toLowerCase()===wanted);
+  if(!b){ showLoginErr(`نمایندگی با آیدی «${bid}» پیدا نشد`); return; }
+  if(!branchIdOf(b)){
+    showLoginErr("این نمایندگی «آیدی (branch_id)» ندارد — مدیر کل باید در تنظیمات آیدی بدهد");
+    return;
+  }
+  const stored=branchPassOf(b);
+  if(!stored){
+    showLoginErr("برای این نمایندگی پسورد تعریف نشده — از مدیر کل بخواه در تنظیمات پسورد بدهد");
+    return;
+  }
+  if(String(p)!==String(stored)){
+    showLoginErr("پسورد نمایندگی اشتباه است");
+    if(passEl) passEl.value="";
+    return;
+  }
+  // نشست لاک‌شده روی همین نمایندگی
+  currentBranch={id:branchIdOf(b),name:branchNameOf(b)||branchIdOf(b),locked:true};
+  selectedRole="admin";
+  currentUser={role:"admin",master:false,branch:true,
+    name:"🏢 "+(branchNameOf(b)||branchIdOf(b)),
+    av:"🏢",color:"var(--tl)",
+    pages:[...BRANCH_PAGES]};
+  startSession();
+}
 function showLoginErr(m){const e=document.getElementById("loginErr");e.style.display="flex";e.textContent=m;}
+
+// ── برچسب نقش در سایدبار ──
+function userRoleLabel(){
+  if(!currentUser) return "";
+  if(currentUser.branch) return "🏢 نمایندگی — "+(currentBranch.name||currentBranch.id||"");
+  if(currentUser.master) return currentBranch.id?("👑 مدیر کل — نمایندگی: "+(currentBranch.name||currentBranch.id)):"👑 مدیر کل — همه نمایندگی‌ها (تجمیعی)";
+  return "👷 کارمند فابریکه"+(currentBranch.id?" — "+(currentBranch.name||currentBranch.id):"");
+}
+// ── UI سوییچر نمایندگی در هدر ──
+function renderBranchUI(){
+  const sw=document.getElementById("branchSwitcher");
+  const badge=document.getElementById("branchBadge");
+  const isMaster=!!currentUser&&currentUser.master===true;
+  if(isMaster){
+    if(sw){
+      sw.innerHTML='<option value="">🏢 همه نمایندگی‌ها (تجمیعی)</option>'+
+        _branches.map(b=>`<option value="${escHTML(branchIdOf(b))}">${escHTML(branchNameOf(b)||branchIdOf(b))}</option>`).join("");
+      sw.value=currentBranch.id||"";
+      sw.style.display="";
+    }
+    if(badge) badge.style.display="none";
+  } else {
+    if(sw) sw.style.display="none";
+    if(badge){
+      if(currentBranch.id){
+        badge.style.display="flex";
+        badge.textContent="🏢 "+(currentBranch.name||currentBranch.id);
+      } else badge.style.display="none";
+    }
+  }
+  try{ document.getElementById("userRoleD").textContent=userRoleLabel(); }catch(e){}
+}
+
+// انتخاب نمایندگی از سوییچر (فقط مدیر کل)
+async function onBranchSwitch(v){
+  if(!currentUser||!currentUser.master){ renderBranchUI(); return; }
+  if(v){
+    const b=_branches.find(x=>branchIdOf(x)===String(v));
+    currentBranch={id:String(v),name:b?(branchNameOf(b)||String(v)):String(v),locked:false};
+  } else {
+    currentBranch={id:null,name:"همه نمایندگی‌ها (تجمیعی)",locked:false};
+  }
+  await reloadBranchData();
+}
+// پاک‌سازی کش‌های وابسته به نمایندگی بعد از تغییر نمایندگی
+function _branchDataSwitched(){
+  try{ _batches=[];_batchWaste=[];_nbMats=[];_nbSeq=0; }catch(e){}
+  try{ _reconLoaded=false;_reconData={byDate:{}}; }catch(e){}
+  try{ S.stockMap={};S.suppMap={}; }catch(e){}
+  try{ CUSTOMERS.splice(0,CUSTOMERS.length); }catch(e){}
+  // کش «وجود ستون branch_id» مستقل از نمایندگی است و پاک نمی‌شود
+}
+// بارگذاری مجدد همه داده‌های صفحه با نمایندگی جدید
+async function reloadBranchData(){
+  _branchDataSwitched();
+  renderBranchUI();
+  await safeStep("branch:stock",refreshStockMap);
+  await safeStep("branch:suppliers",async()=>{ await refreshSuppMap(); syncSuppliersFromBalances(); });
+  await safeStep("branch:customers",loadCustomersData);
+  await safeStep("branch:hiddenMats",loadHiddenMats);
+  try{ populateDropdowns(); }catch(e){}
+  let cp=(typeof _curPage!=="undefined"&&_curPage)?_curPage:"dash";
+  if(currentUser&&currentUser.pages&&!currentUser.pages.includes(cp)) cp="dash";
+  if(!document.getElementById("page-"+cp)) cp="dash";
+  try{ goPage(cp); }catch(e){}
+  showToast("✅ نمایندگی عوض شد — "+branchLabel());
+}
+
 function doLogout(){
-  currentUser=null;selectedRole=null;
+  currentUser=null;selectedRole=null;loginMode="master";
+  currentBranch={id:null,name:"همه نمایندگی‌ها (تجمیعی)",locked:false};
+  _branches=[];
+  try{ _branchDataSwitched(); }catch(e){}
+  try{ SUPPLIERS.splice(0,SUPPLIERS.length); }catch(e){}
+  try{ _hiddenMats=new Set(); }catch(e){}
   document.getElementById("app").style.display="none";
   document.getElementById("loginPage").style.display="flex";
   document.getElementById("loginPass").value="";
   document.getElementById("loginErr").style.display="none";
+  const bId=document.getElementById("loginBranchId"); if(bId) bId.value="";
+  const bPass=document.getElementById("loginBranchPass"); if(bPass) bPass.value="";
   document.getElementById("role-admin").className="role-btn-v2";
   document.getElementById("role-staff").className="role-btn-v2";
   document.getElementById("check-admin").textContent="";
   document.getElementById("check-staff").textContent="";
-  document.getElementById("role-hint").textContent="اول نقش را انتخاب کن";
+  document.getElementById("role-hint").textContent="ابتدا نقش خود را انتخاب کنید";
+  try{ selectLoginMode("master"); }catch(e){}
+  try{ renderBranchUI(); }catch(e){}
 }
 
 async function refreshStockMap(){
   const rows=await sbGet("mat_stock");
-  if(rows) rows.forEach(r=>{S.stockMap[r.material]={kg:+r.total_kg,avgCost:+r.avg_cost,val:+r.total_value_afn,unit:r.unit||'kg'};});
+  // بازسازی کامل نقشه (فقط وقتی پاسخ معتبر است) — تا داده‌های نمایندگی قبلی باقی نماند
+  if(!Array.isArray(rows)) return;
+  S.stockMap={};
+  // در حالت «همه نمایندگی‌ها» ردیف‌های هم‌نام جمع زده می‌شوند (نمای تجمیعی)
+  const agg=!branchScopeId();
+  rows.forEach(r=>{
+    const m=r.material;
+    if(!m) return;
+    const kg=+r.total_kg||0;
+    const cost=+r.avg_cost||0;
+    const val=+r.total_value_afn||(kg*cost);
+    const cur=S.stockMap[m];
+    if(agg&&cur&&cur._agg){
+      cur.kg=+(cur.kg+kg).toFixed(3);
+      cur.val=+(cur.val+val).toFixed(2);
+      cur.avgCost=cur.kg>0?+(cur.val/cur.kg).toFixed(2):0;
+      return;
+    }
+    S.stockMap[m]={kg,avgCost:cost,val,unit:r.unit||'kg',_agg:agg};
+  });
 }
 async function refreshSuppMap(){
   const rows=await sbGet("supplier_balances");
-  if(rows) rows.forEach(r=>{S.suppMap[r.supplier_id]={
-    name:r.supplier_name,
-    bal:+r.balance_usd||0,
-    balAfn:+r.balance_afn||0
-  };});
+  if(!Array.isArray(rows)) return;
+  S.suppMap={};
+  const agg=!branchScopeId();
+  rows.forEach(r=>{
+    const id=r.supplier_id;
+    if(id===undefined||id===null) return;
+    const bal=+r.balance_usd||0, balAfn=+r.balance_afn||0;
+    const cur=S.suppMap[id];
+    if(agg&&cur&&cur._agg){
+      cur.bal=+(cur.bal+bal).toFixed(2);
+      cur.balAfn=+(cur.balAfn+balAfn).toFixed(2);
+      return;
+    }
+    S.suppMap[id]={name:r.supplier_name,bal,balAfn,_agg:agg};
+  });
 }
 // تامین‌کنندگان فقط از دیتابیس — پیش‌فرض خالی؛ نام‌ها از supplier_balances بازسازی می‌شوند
 function syncSuppliersFromBalances(){
@@ -3900,6 +4538,9 @@ const PAGE_TITLES={dash:"داشبورد",sales:"فروش",orders:"فرمایشا
 function goPage(id){
   const adminOnlyPages=["cash","report","reports_more","settings","emp","tax","cheque","partners","expenses","assets"];
   if(adminOnlyPages.includes(id)&&currentUser?.role!=="admin"){goPage("dash");return;}
+  // صفحه‌هایی که در فهرست دسترسی این نشست نیست (مثلاً نمایندگی و تنظیمات) بسته است
+  if(currentUser&&Array.isArray(currentUser.pages)&&!currentUser.pages.includes(id)){id="dash";}
+  window._curPage=id;
   // عنوان صفحه باید قبل از هر return به‌روز شود تا هیچ‌وقت خالی نماند
   const allTitles={dash:"داشبورد",sales:"فروش",orders:"فرمایشات",products:"مدیریت محصولات",buy:"خرید مواد",prod:"تولید",
     stock:"انبار مواد",cust:"مشتریان",supp:"تامین‌کنندگان",cash:"صندوق افغانی",
@@ -5357,6 +5998,8 @@ async function renderSettings(){
   document.getElementById("rateInput").value=S.usdRate;
   // نرخ آنلاین دالر
   fetchUsdRate();
+  // مدیریت نمایندگی‌ها — فقط مدیر کل
+  try{ renderBranches(); }catch(e){ console.error("[settings] branches:",e&&e.message||e); }
   // init vocab tab
   switchVocabTab('menu');
   // نرخ اجرت
@@ -6180,7 +6823,7 @@ let _buyItemIdx=0;
 
 // فهرست مواد برای انتخاب قلم خرید — مواد استاندارد + مواد سفارشی موجود در گدام
 function buyMatList(){
-  return [...new Set([...MATS,...Object.keys(S.stockMap||{})])];
+  return [...new Set([...liveMatNames(),..._buyItems.map(it=>it.material).filter(Boolean)])];
 }
 function buyMatOptions(selected){
   return buyMatList().map(m=>`<option value="${escHTML(m)}"${m===selected?" selected":""}>${escHTML(m)}</option>`).join("");
@@ -6524,7 +7167,7 @@ function refreshProdMatsTotal(){
 // گزینه‌های فهرست مواد — مواد هم‌خانواده همان بخش اول می‌آیند
 // (فهرست از mat_stock ساخته می‌شود، پس ماده تازه‌اضافه‌شده هم فوراً دیده می‌شود)
 function prodMatOptions(kind,selected){
-  const mats=Object.keys(S.stockMap||{});
+  const mats=liveMatNames();
   if(!mats.length) return '<option value="">— ماده‌ای در انبار نیست —</option>';
   const ordered=[...mats].sort((a,b)=>{
     const pa=isPackMat(a)?1:0, pb=isPackMat(b)?1:0;
@@ -6567,7 +7210,7 @@ function renderProdMats(){
   refreshProdMatsTotal();
 }
 function addProdMatRow(kind="raw"){
-  const mats=Object.keys(S.stockMap||{});
+  const mats=liveMatNames();
   const preferred=kind==="pack"?mats.find(m=>isPackMat(m)):mats.find(m=>!isPackMat(m));
   _prodMats.push({id:++_prodMatSeq,kind,m:preferred||mats[0]||"",kg:0});
   renderProdMats();
@@ -6879,12 +7522,14 @@ const BATCH_STATUS={mixing:"⚗️ در مکسچر",producing:"🏭 در تول�
 let _batches=[],_batchWaste=[],_nbMats=[],_nbSeq=0,_brBatchId="";
 let _brAvgPrice=0;
 const _brPriceCache={};
+// کلید ذخیره‌سازی مکسچر — مخصوص هر نمایندگی
+function batchDataKey(){ return branchSettingKey(BATCH_KEY); }
 
 async function loadBatchData(force){
   if(!force&&(_batches.length||_batchWaste.length)) return {batches:_batches,waste:_batchWaste};
   let raw=null;
   try{
-    const rows=await sbGet("settings",`?key=eq.${BATCH_KEY}`)||[];
+    const rows=await sbGet("settings",`?key=eq.${encodeURIComponent(batchDataKey())}`)||[];
     raw=rows[0]?rows[0].value:null;
   }catch(e){ console.error("[batch] load:",e); }
   let data=null;
@@ -6895,10 +7540,12 @@ async function loadBatchData(force){
 }
 async function saveBatchData(){
   const val=JSON.stringify({batches:_batches,waste:_batchWaste,updatedAt:new Date().toISOString()});
+  const key=batchDataKey();
+  const qs=`?key=eq.${encodeURIComponent(key)}`;
   try{
-    const existing=await sbGet("settings",`?key=eq.${BATCH_KEY}`)||[];
-    if(existing.length>0) return (await sbPatch("settings",{value:val,updated_at:new Date().toISOString()},`?key=eq.${BATCH_KEY}`))!==null;
-    return (await sbPost("settings",{key:BATCH_KEY,value:val}))!==null;
+    const existing=await sbGet("settings",qs)||[];
+    if(existing.length>0) return (await sbPatch("settings",{value:val,updated_at:new Date().toISOString()},qs))!==null;
+    return (await sbPost("settings",{key,value:val}))!==null;
   }catch(e){ console.error("[batch] save:",e); return false; }
 }
 // کچره آماده بازیافت (کیلو)
@@ -6921,8 +7568,7 @@ function consumeWaste(kg,batchNo){
 }
 // گزینه‌های مواد مکسچر — از گدام مواد (mat_stock)
 function batchMatOptions(selected){
-  const keys=Object.keys(S.stockMap||{});
-  const list=keys.length?keys:[...MATS];
+  const list=liveMatNames();
   if(!list.length) return '<option value="">— ماده‌ای در انبار نیست —</option>';
   return list.map(m=>{
     const st=S.stockMap[m]||{kg:0,avgCost:0};
@@ -6948,8 +7594,7 @@ async function initNewBatchModal(){
   addBatchMaterial();
 }
 function addBatchMaterial(){
-  const keys=Object.keys(S.stockMap||{});
-  const m=keys[0]||MATS[0]||"";
+  const m=liveMatNames()[0]||"";
   _nbMats.push({id:++_nbSeq,m,kg:0,cost:+(S.stockMap[m]?.avgCost||0)});
   renderBatchMats();
 }
@@ -8605,17 +9250,44 @@ function openEditCust(id){
   document.getElementById("ec-msg").innerHTML="";
   openModal("modalEditCust");
 }
+// کلید مشتریان — مخصوص هر نمایندگی
+function customersDataKey(){ return branchSettingKey("customers_data"); }
+// اعمال فهرست ذخیره‌شده روی آرایه CUSTOMERS (بدون پاک کردن موارد فعلی)
+function applyCustomersData(saved){
+  if(!Array.isArray(saved)) return;
+  saved.forEach(sc=>{
+    if(!sc||!sc.id) return;
+    const idx=CUSTOMERS.findIndex(c=>String(c.id)===String(sc.id));
+    if(idx>=0){CUSTOMERS[idx].n=sc.n;CUSTOMERS[idx].p=sc.p;CUSTOMERS[idx].ob=sc.ob||0;CUSTOMERS[idx].ph=sc.ph||"";}
+    else CUSTOMERS.push({id:sc.id,n:sc.n,p:sc.p,ob:sc.ob||0,ph:sc.ph||""});
+  });
+}
+// بارگذاری مشتریان نمایندگی فعال (بعد از تغییر نمایندگی هم صدا زده می‌شود)
+async function loadCustomersData(){
+  try{
+    const key=customersDataKey();
+    const rows=await sbGet("settings",`?key=eq.${encodeURIComponent(key)}`)||[];
+    const raw=rows[0]?.value;
+    if(!raw) return CUSTOMERS;
+    let saved=null;
+    try{ saved=JSON.parse(raw); }catch(e){ saved=null; }
+    applyCustomersData(saved);
+  }catch(e){ console.error("[customers] load:",e&&e.message||e); }
+  return CUSTOMERS;
+}
 // ذخیره فهرست مشتریان در settings.customers_data — با نتیجه موفق/ناموفق
 async function saveCustomersToDb(){
   const custData=JSON.stringify(CUSTOMERS.map(c=>({id:c.id,n:c.n,p:c.p,ob:c.ob,ph:c.ph||""})));
   window._lastSBError=null;
-  const existing=await sbGet("settings","?key=eq.customers_data");
+  const key=customersDataKey();
+  const qs=`?key=eq.${encodeURIComponent(key)}`;
+  const existing=await sbGet("settings",qs);
   if(existing===null) return false;
   if(existing.length>0){
-    const r=await sbPatch("settings",{value:custData,updated_at:new Date().toISOString()},"?key=eq.customers_data");
+    const r=await sbPatch("settings",{value:custData,updated_at:new Date().toISOString()},qs);
     return r!==null;
   }
-  const ins=await sbPost("settings",{key:"customers_data",value:custData});
+  const ins=await sbPost("settings",{key,value:custData});
   return ins!==null;
 }
 async function saveEditCust(){
@@ -9295,9 +9967,14 @@ async function initApp(){
     document.getElementById("userAv").textContent=currentUser.av;
     document.getElementById("userAv").style.background=`linear-gradient(135deg,${currentUser.color},${currentUser.color}aa)`;
     document.getElementById("userNameD").textContent=currentUser.name;
-    document.getElementById("userRoleD").textContent=currentUser.role==="admin"?"👑 مالک — همه دسترسی‌ها":"👷 کارمند فابریکه";
+    document.getElementById("userRoleD").textContent=userRoleLabel();
     document.querySelectorAll(".ni[data-roles]").forEach(b=>{
       b.style.display=b.getAttribute("data-roles").includes(currentUser.role)?"flex":"none";
+    });
+    // صفحه‌هایی که در فهرست دسترسی این نشست نیستند (مثلاً تنظیمات برای نمایندگی) پنهان می‌شوند
+    document.querySelectorAll(".ni[data-page]").forEach(b=>{
+      const pg=b.getAttribute("data-page");
+      if(currentUser.pages&&!currentUser.pages.includes(pg)) b.style.display="none";
     });
     document.querySelectorAll(".tab-item").forEach(t=>{
       const tab=t.getAttribute("data-tab");
@@ -9319,21 +9996,12 @@ async function initApp(){
       if(s.key==="company_name"&&s.value){
         document.getElementById("companyNameInput").value=s.value;
       }
-      // لود مشتریان ذخیره‌شده از Supabase
-      if(s.key==="customers_data"){
-        try{
-          const saved=JSON.parse(s.value);
-          if(saved&&saved.length>0){
-            saved.forEach(sc=>{
-              const idx=CUSTOMERS.findIndex(c=>c.id===sc.id);
-              if(idx>=0){CUSTOMERS[idx].n=sc.n;CUSTOMERS[idx].p=sc.p;CUSTOMERS[idx].ob=sc.ob||0;CUSTOMERS[idx].ph=sc.ph||"";}
-              else CUSTOMERS.push({id:sc.id,n:sc.n,p:sc.p,ob:sc.ob||0,ph:sc.ph||""});
-            });
-          }
-        }catch(e){}
-      }
     });
   });
+  // نمایندگی‌ها + مشتریان + مواد پنهان‌شده (هر کدام مستقل و ایمن)
+  await safeStep("initApp:branches",async()=>{ await loadBranches(true); renderBranchUI(); });
+  await safeStep("initApp:hiddenMats",loadHiddenMats);
+  await safeStep("initApp:customers",loadCustomersData);
   // تامین‌کنندگان از Supabase — پیش‌فرض خالی، فقط رکوردهای واقعی دیتابیس
   await safeStep("initApp:suppliers",async()=>{ await refreshSuppMap(); syncSuppliersFromBalances(); });
   try{
@@ -9937,6 +10605,8 @@ function printInvoice(saleId){
 // ══ مغایرت‌گیری روزانه انبار ══
 // فرمول: موجودی اولیه + تولید − فروش − ضایعات = موجودی سیستم
 const RECON_KEY="stock_recon_v1";
+// کلید شمارش انبار — مخصوص هر نمایندگی
+function reconDataKey(){ return branchSettingKey(RECON_KEY); }
 let _reconData={byDate:{}};
 let _reconLoaded=false;
 let _reconView=[];      // ردیف‌های رندرشده برای همان تاریخ (برای بروزرسانی بدون رندر مجدد)
@@ -9953,7 +10623,7 @@ function reconScrapDoz(r){
 }
 async function loadReconData(){
   try{
-    const rows=await sbGet("settings",`?key=eq.${RECON_KEY}`)||[];
+    const rows=await sbGet("settings",`?key=eq.${encodeURIComponent(reconDataKey())}`)||[];
     const raw=rows[0]?.value;
     const o=raw?(typeof raw==="string"?JSON.parse(raw):raw):{};
     _reconData=(o&&typeof o==="object")?o:{byDate:{}};
@@ -9963,10 +10633,12 @@ async function loadReconData(){
 }
 async function saveReconData(){
   const val=JSON.stringify(_reconData);
-  const res=await sbPatch("settings",{value:val,updated_at:new Date().toISOString()},`?key=eq.${RECON_KEY}`);
+  const key=reconDataKey();
+  const qs=`?key=eq.${encodeURIComponent(key)}`;
+  const res=await sbPatch("settings",{value:val,updated_at:new Date().toISOString()},qs);
   if(res===null) return false;
   if(Array.isArray(res)&&res.length===0){
-    const ins=await sbPost("settings",{key:RECON_KEY,value:val});
+    const ins=await sbPost("settings",{key,value:val});
     return ins!==null;
   }
   return true;
@@ -10187,9 +10859,10 @@ async function addNewMaterial(){
     document.getElementById("new_mat_cost").value="";
     document.getElementById("new_mat_unit").value="kg";
     onNewMatUnitChange();
-    await refreshStockMap();
-    await initEditStockModal();
-    renderStock();
+    // اگر این ماده قبلاً پنهان شده بود، دوباره نمایش داده شود
+    if(_hiddenMats.delete(name)){ try{ await saveHiddenMats(); }catch(e){} }
+    await afterMaterialsChanged();
+    try{ await initEditStockModal(); }catch(e){}
     // scroll به ماده جدید
     setTimeout(()=>{
       const list=document.getElementById('edit-stock-list');
@@ -10208,32 +10881,161 @@ async function renderStock(){
   const fgRows=await sbGet('finished_goods','?select=total_value')||[];
   const totalFG=fgRows.reduce((a,r)=>a+(+r.total_value||0),0);
   document.getElementById('stock-fg-val').textContent=afn(totalFG);
-  // فهرست مواد استاندارد از ثابت سراسری MATS می‌آید (مواد جدید از mat_stock خوانده می‌شوند)
-  const MATS_LIST=MATS;
-  // همه مواد از stockMap — مرتب الفبایی
-  const allStockMats=[...new Set([...MATS_LIST,...Object.keys(S.stockMap)])].sort((a,b)=>a.localeCompare(b,'fa'));
+  // فهرست زنده مواد: پیش‌فرض‌های وفا + مواد ثبت‌شده در mat_stock (هر نمایندگی جدا)
+  const allStockMats=liveMatNames().sort((a,b)=>a.localeCompare(b,'fa'));
   window._allStockMats=allStockMats;
-  document.getElementById('stock-tbody').innerHTML=allStockMats.map((m,i)=>{
+  // هشدار حالت تجمیعی (نوشتن موجودی باید داخل یک نمایندگی انجام شود)
+  const bNote=document.getElementById('stock-branch-note');
+  if(bNote) bNote.style.display=(!branchScopeId()&&_branches.length)?'':'none';
+  const tb=document.getElementById('stock-tbody');
+  if(!tb) return;
+  if(!allStockMats.length){
+    tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--t3);padding:18px">هنوز ماده‌ای ثبت نشده — «+ افزودن ماده جدید» را بزن</td></tr>';
+    renderRecon();
+    return;
+  }
+  tb.innerHTML=allStockMats.map((m,i)=>{
     const st=S.stockMap[m]||{kg:0,avgCost:0,unit:'kg'};
     const isPiece=normalizeUnitKey(st.unit)==='piece';
     const unitLbl=unitLabelFa(st.unit);
     const threshold=isPiece?10:5;
     const qty=isPiece?Math.round(+st.kg||0):(+st.kg||0).toFixed(2);
     const sta=st.kg<=0?'🔴 ندارد':st.kg<threshold?'🟡 کم':'🟢 کافی';
-    return`<tr id="stock-row-${i}"><td style="color:var(--t3)">${i+1}</td><td style="font-weight:700">${m}</td>
+    return`<tr id="stock-row-${i}"><td style="color:var(--t3)">${i+1}</td><td style="font-weight:700">${escHTML(m)}</td>
     <td style="font-weight:800;color:${st.kg<=0?'var(--rd)':st.kg<threshold?'var(--gd)':'var(--tx)'}">${qty} ${unitLbl}</td>
     <td class="tdr" style="color:var(--tl);font-weight:700">${afn(st.avgCost,st.avgCost>0&&st.avgCost<100?2:0)}</td>
     <td class="tdr" style="font-weight:700">${afn(st.kg*st.avgCost)}</td>
-    <td style="display:flex;align-items:center;gap:6px">${sta}
-      <button onclick="window._delStock(${i})" style="background:transparent;border:none;color:var(--rd);font-size:14px;cursor:pointer;padding:2px 4px;opacity:0.7" title="حذف">🗑️</button>
+    <td>${sta}</td>
+    <td style="white-space:nowrap">
+      <button onclick="window._editStockRow(${i})" style="background:var(--bl2);border:1px solid rgba(59,138,245,.3);color:var(--bl);border-radius:5px;padding:3px 7px;font-size:11px;cursor:pointer" title="ویرایش نام / واحد / موجودی">✏️</button>
+      <button onclick="window._delStock(${i})" style="background:var(--r2);border:1px solid rgba(240,82,82,.3);color:var(--rd);border-radius:5px;padding:3px 7px;font-size:11px;cursor:pointer" title="حذف">🗑️</button>
     </td></tr>`;
   }).join('');
   // مغایرت‌گیری روزانه (موجودی اولیه + تولید − فروش − ضایعات)
   renderRecon();
 }
+// ══════════════════════════════════════════════════
+// ══ مواد اولیه — افزودن / ویرایش / حذف + سینک اتومات ══
+// ══════════════════════════════════════════════════
+function onMatFormUnitChange(){
+  const unit=normalizeUnitKey(document.getElementById('mf-unit')?.value)||'kg';
+  const lbl=unitLabelFa(unit);
+  const qLbl=document.getElementById('mf-qty-lbl');
+  const cLbl=document.getElementById('mf-cost-lbl');
+  const qInp=document.getElementById('mf-qty');
+  if(qLbl) qLbl.textContent=`موجودی (${lbl})`;
+  if(cLbl) cLbl.textContent=`قیمت فی ${lbl} (؋)`;
+  if(qInp) qInp.step=UNIT_STEPS[unit]||'0.1';
+}
+// باز کردن فرم ماده — بدون نام = افزودن ، با نام = ویرایش همان ماده
+function openMatForm(mat){
+  const name=(mat||'').trim();
+  const st=name?(S.stockMap[name]||{}):{};
+  document.getElementById('mf-title').textContent=name?'✏️ ویرایش ماده':'➕ افزودن ماده جدید';
+  document.getElementById('mf-orig').value=name;
+  document.getElementById('mf-name').value=name;
+  document.getElementById('mf-unit').value=normalizeUnitKey(st.unit)||'kg';
+  document.getElementById('mf-qty').value=st.kg!==undefined?(+st.kg||0):'';
+  document.getElementById('mf-cost').value=st.avgCost!==undefined?(+st.avgCost||0):'';
+  document.getElementById('mf-msg').innerHTML='';
+  const btn=document.getElementById('mf-btn');
+  if(btn){btn.disabled=false;btn.textContent='ذخیره ✓';}
+  onMatFormUnitChange();
+  openModal('modalMatForm');
+}
+// اصلاح نام ماده در ردیف‌های باز فرم‌های خرید / تولید / مکسچر (بدون رفرش)
+function propagateMaterialRename(oldName,newName){
+  if(!oldName||!newName||oldName===newName) return;
+  try{ _buyItems.forEach(it=>{ if(it.material===oldName) it.material=newName; }); }catch(e){}
+  try{ _prodMats.forEach(r=>{ if(r.m===oldName) r.m=newName; }); }catch(e){}
+  try{ _nbMats.forEach(r=>{ if(r.m===oldName) r.m=newName; }); }catch(e){}
+  try{
+    if(S.stockMap&&Object.prototype.hasOwnProperty.call(S.stockMap,oldName)){
+      S.stockMap[newName]=S.stockMap[oldName];
+      delete S.stockMap[oldName];
+    }
+  }catch(e){}
+  try{ if(_hiddenMats.has(oldName)){ _hiddenMats.delete(oldName); _hiddenMats.add(newName); } }catch(e){}
+}
+// بعد از هر تغییر در مواد: انبار + همه منوهای کشویی همه ماژول‌ها تازه می‌شوند
+async function afterMaterialsChanged(){
+  try{ await refreshStockMap(); }catch(e){}
+  try{ await renderStock(); }catch(e){}
+  try{ if(document.getElementById('buy-items-list')){ renderBuyItems(); calcBuy(); } }catch(e){}
+  try{ if(document.getElementById('prod-mats-raw-list')){ renderProdMats(); } }catch(e){}
+  try{ if(document.getElementById('nb-materials-list')){ renderBatchMats(); } }catch(e){}
+  try{ populateDropdowns(); }catch(e){}
+}
+
+// ذخیره فرم ماده (افزودن یا ویرایش / تغییر نام)
+async function submitMatForm(){
+  const msg=document.getElementById('mf-msg');
+  const btn=document.getElementById('mf-btn');
+  const orig=(document.getElementById('mf-orig').value||'').trim();
+  const name=(document.getElementById('mf-name').value||'').trim();
+  const unit=normalizeUnitKey(document.getElementById('mf-unit').value)||'kg';
+  const qty=+(document.getElementById('mf-qty').value)||0;
+  const cost=+(document.getElementById('mf-cost').value)||0;
+  if(!name){ msg.innerHTML='<div class="ib err">نام ماده را وارد کن</div>'; return; }
+  const hasRow=Object.prototype.hasOwnProperty.call(S.stockMap||{},orig||name);
+  if(orig && name!==orig && hasRow && S.stockMap[name]!==undefined){
+    msg.innerHTML='<div class="ib err">ماده‌ای با این نام قبلاً ثبت شده — نام دیگری انتخاب کن</div>';
+    return;
+  }
+  btn.disabled=true; btn.textContent='در حال ذخیره...';
+  window._lastSBError=null;
+  let ok=true;
+  try{
+    if(orig && hasRow && orig!==name){
+      // ۱) ردیف با نام جدید ساخته می‌شود
+      const ins=await sbPost('mat_stock',{material:name,total_kg:qty,avg_cost:cost,total_value_afn:qty*cost,unit,updated_at:new Date().toISOString()});
+      if(ins===null) throw new Error(window._lastSBError||'insert failed');
+      // ۲) ردیف قدیمی حذف می‌شود
+      await sbDelete('mat_stock',`?material=eq.${encodeURIComponent(orig)}`);
+    } else if(hasRow){
+      const res=await sbPatch('mat_stock',{total_kg:qty,avg_cost:cost,total_value_afn:qty*cost,unit,updated_at:new Date().toISOString()},`?material=eq.${encodeURIComponent(orig||name)}`);
+      if(res===null) throw new Error(window._lastSBError||'update failed');
+    } else {
+      const res=await sbPost('mat_stock',{material:name,total_kg:qty,avg_cost:cost,total_value_afn:qty*cost,unit,updated_at:new Date().toISOString()});
+      if(res===null) throw new Error(window._lastSBError||'insert failed');
+    }
+  }catch(e){ ok=false; console.error('[submitMatForm]',e); }
+  btn.disabled=false; btn.textContent='ذخیره ✓';
+  if(!ok){ msg.innerHTML=sbErrorHTML('خطا در ذخیره ماده'); return; }
+  if(orig&&orig!==name) propagateMaterialRename(orig,name);
+  // ماده‌ای که قبلاً حذف شده بود، با افزودن مجدد برگردد
+  const wasHidden=_hiddenMats.delete(name)|_hiddenMats.delete(orig);
+  if(wasHidden){ try{ await saveHiddenMats(); }catch(e){} }
+  msg.innerHTML='<div class="ib ok">✅ ذخیره شد</div>';
+  closeModal('modalMatForm');
+  showSaved();
+  await afterMaterialsChanged();
+}
+
+// حذف ماده (یا پنهان‌کردن ماده پیش‌فرض که رکورد انبار ندارد)
+async function deleteMaterial(mat){
+  if(!mat) return;
+  const hasRow=Object.prototype.hasOwnProperty.call(S.stockMap||{},mat);
+  if(hasRow){
+    if(!confirm(`ماده «${mat}» با موجودی و قیمتش حذف شود؟`)) return;
+    window._lastSBError=null;
+    const res=await sbDelete('mat_stock',`?material=eq.${encodeURIComponent(mat)}`);
+    if(res===null){ alert('خطا در حذف ماده\n\n'+(window._lastSBError||'')); return; }
+  } else {
+    if(!confirm(`«${mat}» در انبار رکوردی ندارد — از فهرست پیش‌فرض حذف شود؟`)) return;
+  }
+  if(MATS.includes(mat) && !_hiddenMats.has(mat)){
+    _hiddenMats.add(mat);
+    try{ await saveHiddenMats(); }catch(e){}
+  }
+  try{ delete S.stockMap[mat]; }catch(e){}
+  showSaved();
+  await afterMaterialsChanged();
+}
+
 async function initEditStockModal(){
-  // فهرست مواد استاندارد از ثابت سراسری MATS می‌آید (مواد جدید از mat_stock خوانده می‌شوند)
-  const MATS_LIST=MATS;
+  // فهرست زنده مواد (پیش‌فرض‌های وفا + مواد ثبت‌شده در انبار)
+  const MATS_LIST=liveMatNames();
   const rows=await sbGet('mat_stock','?order=material.asc')||[];
   const stockMap={};
   rows.forEach(r=>stockMap[r.material]=r);
@@ -10298,26 +11100,19 @@ function renderUnitLabel(key){
 // ذخیره لیست مواد برای دکمه حذف
 window._delStock=async function(idx){
   if(!window._allStockMats||!window._allStockMats[idx])return;
-  await deleteStockRow(window._allStockMats[idx],idx);
+  await deleteMaterial(window._allStockMats[idx]);
+};
+// دکمه ✏️ هر ردیف انبار — فرم ویرایش همان ماده
+window._editStockRow=function(idx){
+  const m=window._allStockMats&&window._allStockMats[idx];
+  if(m) openMatForm(m);
 };
 async function deleteStockRow(mat,rowIdx){
-  // فهرست مواد استاندارد از ثابت سراسری MATS می‌آید (مواد جدید از mat_stock خوانده می‌شوند)
-  const MATS_LIST=MATS;
-  const isStandard=MATS_LIST.includes(mat);
-  if(isStandard){
-    if(!confirm(`"${mat}" صفر شود؟`))return;
-    await sbPatch('mat_stock',{total_kg:0,avg_cost:0,total_value_afn:0,updated_at:new Date().toISOString()},`?material=eq.${encodeURIComponent(mat)}`);
-  } else {
-    if(!confirm(`"${mat}" کاملاً حذف شود؟`))return;
-    await sbDelete('mat_stock',`?material=eq.${encodeURIComponent(mat)}`);
-  }
-  await refreshStockMap();
-  renderStock();
+  await deleteMaterial(mat);
 }
 async function deleteExtraMat(mat,key){
-  // فهرست مواد استاندارد از ثابت سراسری MATS می‌آید (مواد جدید از mat_stock خوانده می‌شوند)
-  const MATS_LIST=MATS;
-  const isStandard=MATS_LIST.includes(mat);
+  // ماده استاندارد (پیش‌فرض وفا) صفر می‌شود، ماده سفارشی حذف می‌شود
+  const isStandard=MATS.includes(mat);
   if(isStandard){
     if(!confirm(`"${mat}" صفر شود؟`))return;
     await sbPatch('mat_stock',{total_kg:0,avg_cost:0,total_value_afn:0,updated_at:new Date().toISOString()},`?material=eq.${encodeURIComponent(mat)}`);
@@ -10356,6 +11151,7 @@ async function saveStockEdits(){
         // نام تغییر کرده
         await sbDelete('mat_stock',`?material=eq.${encodeURIComponent(mat)}`);
         await sbPost('mat_stock',{material:newName,total_kg:kg,avg_cost:cost,total_value_afn:kg*cost,unit,updated_at:new Date().toISOString()});
+        propagateMaterialRename(mat,newName);
       } else {
         await sbPatch('mat_stock',{total_kg:kg,avg_cost:cost,total_value_afn:kg*cost,unit,updated_at:new Date().toISOString()},`?material=eq.${encodeURIComponent(mat)}`);
       }
@@ -10364,9 +11160,10 @@ async function saveStockEdits(){
     }
   }
   await refreshStockMap();
-  showSaved();closeModal('modalEditStock');renderStock();
+  showSaved();closeModal('modalEditStock');
   document.getElementById('edit-stock-btn').disabled=false;
   document.getElementById('edit-stock-btn').textContent='ذخیره همه ✓';
+  await afterMaterialsChanged();
 }
 // ردیف اسپینر و ردیف حالت خالی جدول گدام جنس تولیدشده
 const FG_SPINNER_ROW='<tr><td colspan="7" style="text-align:center;padding:20px"><div class="spinner" style="margin:auto"></div></td></tr>';
@@ -10529,7 +11326,7 @@ async function submitFG(){
 }
 async function deleteFG(id){
   if(!confirm('این جنس پاک شود؟')) return;
-  await fetch(`${SB_URL}/rest/v1/finished_goods?id=eq.${id}`,{method:'DELETE',headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  await sbDelete('finished_goods',`?id=eq.${encodeURIComponent(id)}`);
   renderFG();
 }
 
@@ -11240,7 +12037,9 @@ document.addEventListener('input',function(e){
 // ──────────────────────
 
 document.addEventListener("keydown",e=>{
-  if(e.key==="Enter"&&document.getElementById("loginPage").style.display!=="none") doLogin();
+  const loginEl=document.getElementById("loginPage");
+  if(e.key!=="Enter"||!loginEl||loginEl.style.display==="none") return;
+  if(loginMode==="branch") doBranchLogin(); else doLogin();
 });
 
 // ══ VOCAB & PRODUCTS ══
