@@ -2,6 +2,139 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   SECURITY GUARD — Domain Lock · Anti-Copy · Anti-Inspect
+   فقط روی دامنه رسمی اجرا می‌شود: matiarya05-sudo.github.io | localhost
+   ══════════════════════════════════════════════════════════════════ */
+(function(){
+  "use strict";
+  var ALLOWED_HOSTS=["matiarya05-sudo.github.io","localhost","127.0.0.1"];
+  var LOCK_MESSAGE="خطای امنیتی: کپی‌برداری غیرمجاز است. مجوز این سیستم فقط متعلق به مالک اصلی است.";
+  var host="";
+  try{ host=String(window.location.hostname||"").toLowerCase(); }catch(e){ host=""; }
+  var allowed=false;
+  try{ allowed=(window.location.protocol!=="file:" && ALLOWED_HOSTS.indexOf(host)>=0); }catch(e){ allowed=false; }
+
+  window.__SECURITY_LOCKED__=!allowed;
+  window.__SECURITY_HOST__=host;
+
+  function isEditable(el){
+    try{
+      if(!el||el.nodeType!==1) return false;
+      var tag=el.tagName;
+      if(tag==="INPUT"||tag==="TEXTAREA"||tag==="SELECT"||tag==="OPTION") return true;
+      if(el.isContentEditable) return true;
+      if(el.closest&&el.closest('[contenteditable="true"]')) return true;
+    }catch(e){}
+    return false;
+  }
+
+  /* ── حالت مسدود: پاک‌کردن فوری صفحه + قطع کامل شبکه (بدون اتصال به Supabase) ── */
+  if(!allowed){
+    try{ window.fetch=function(){ return Promise.reject(new Error("SECURITY_LOCK")); }; }catch(e){}
+    try{
+      var XHR=window.XMLHttpRequest;
+      if(XHR&&XHR.prototype){
+        XHR.prototype.open=function(){ throw new Error("SECURITY_LOCK"); };
+        XHR.prototype.send=function(){ throw new Error("SECURITY_LOCK"); };
+      }
+    }catch(e){}
+    try{ window.WebSocket=function(){ throw new Error("SECURITY_LOCK"); }; }catch(e){}
+    try{ if(window.navigator) window.navigator.sendBeacon=function(){ return false; }; }catch(e){}
+
+    var de=document.documentElement;
+    de.setAttribute("data-security-lock","1");
+    de.style.setProperty("display","none","important");
+    var guardStyle=document.createElement("style");
+    guardStyle.id="securityGuardStyle";
+    guardStyle.textContent="html,body{display:none!important}";
+    (document.head||de).appendChild(guardStyle);
+
+    var paintLockScreen=function(){
+      try{
+        if(!document.body) return;
+        if(document.getElementById("securityLockScreen")){
+          de.style.setProperty("display","block","important");
+          document.body.style.setProperty("display","block","important");
+          return;
+        }
+        /* پاک‌کردن کامل بدنه صفحه */
+        document.body.innerHTML="";
+        if(guardStyle&&guardStyle.parentNode) guardStyle.parentNode.removeChild(guardStyle);
+        de.style.removeProperty("display");
+        document.body.setAttribute("style","margin:0;padding:0;min-height:100vh;background:#4d0a11");
+        var safeHost=(host||"file://").replace(/[&<>"']/g,function(ch){
+          return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[ch];
+        });
+        var box=document.createElement("div");
+        box.id="securityLockScreen";
+        box.setAttribute("dir","rtl");
+        box.setAttribute("style","position:fixed;inset:0;z-index:2147483647;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:32px;box-sizing:border-box;text-align:center;background:radial-gradient(circle at 50% 20%,#8e1220 0%,#4d0a11 55%,#2a0409 100%);color:#fff;font-family:Vazirmatn,Tahoma,Arial,sans-serif");
+        box.innerHTML=
+          '<div style="font-size:72px;line-height:1;filter:drop-shadow(0 8px 24px rgba(0,0,0,.45))">🔒</div>'+
+          '<div style="font-size:24px;font-weight:900;letter-spacing:.3px">خطای امنیتی</div>'+
+          '<div style="max-width:560px;font-size:15px;font-weight:700;line-height:2">'+LOCK_MESSAGE+'</div>'+
+          '<div style="font-size:12px;opacity:.85;direction:ltr;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:8px 14px">Blocked domain: <b>'+safeHost+'</b></div>'+
+          '<div style="font-size:11px;opacity:.7;line-height:1.9">این نسخه فقط روی دامنه رسمی شرکت تولید پاپوش وفا اجرا می‌شود.</div>';
+        document.body.appendChild(box);
+        document.title="خطای امنیتی | PCU ERP";
+        /* اگر کسی تلاش کرد صفحه را بازگرداند، دوباره پاک می‌شود */
+        if(!window.__securityLockObserver&&typeof MutationObserver!=="undefined"){
+          window.__securityLockObserver=new MutationObserver(function(){
+            if(!document.getElementById("securityLockScreen")) paintLockScreen();
+          });
+          window.__securityLockObserver.observe(document.body,{childList:true});
+        }
+      }catch(e){}
+    };
+
+    var poll=setInterval(function(){
+      if(document.body){ paintLockScreen(); clearInterval(poll); }
+    },25);
+    setTimeout(function(){ try{ clearInterval(poll); }catch(e){} paintLockScreen(); },1500);
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",paintLockScreen);
+    else paintLockScreen();
+    document.addEventListener("readystatechange",paintLockScreen);
+    return;
+  }
+
+  /* ── حالت مجاز: ضد کپی و ضد بازرسی ── */
+  document.addEventListener("contextmenu",function(e){
+    e.preventDefault(); e.stopPropagation(); return false;
+  },true);
+  document.addEventListener("selectstart",function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault(); return false;
+  },true);
+  document.addEventListener("copy",function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault(); e.stopPropagation(); return false;
+  },true);
+  document.addEventListener("cut",function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault(); e.stopPropagation(); return false;
+  },true);
+  document.addEventListener("dragstart",function(e){
+    if(isEditable(e.target)) return;
+    e.preventDefault(); return false;
+  },true);
+  document.addEventListener("keydown",function(e){
+    var k=String(e.key||"").toLowerCase();
+    var mod=e.ctrlKey||e.metaKey;
+    var block=false;
+    if(k==="f12") block=true;                                             /* F12 */
+    if(mod&&e.shiftKey&&(k==="i"||k==="j"||k==="c"||k==="k")) block=true; /* Ctrl/Cmd+Shift+I/J/C/K */
+    if(mod&&!e.shiftKey&&!e.altKey&&k==="u") block=true;                  /* Ctrl+U / Cmd+U */
+    if(e.metaKey&&e.altKey&&(k==="i"||k==="j"||k==="c")) block=true;     /* Cmd+Option+I/J/C */
+    if(block){
+      e.preventDefault(); e.stopPropagation();
+      try{ e.stopImmediatePropagation(); }catch(_e){}
+      return false;
+    }
+  },true);
+})();
+</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,7 +151,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+/* فیلدهای ورودی همیشه قابل انتخاب و تایپ می‌مانند */
+input,textarea,select,option,[contenteditable="true"]{-webkit-user-select:text!important;user-select:text!important}
 :root{
   --bg:#09080a;--b2:#111018;--b3:#1a1820;--b4:#221f2a;
   --bd:#2e2840;--bd2:#3d3558;
@@ -791,6 +926,22 @@ pre.sql-box{direction:ltr;text-align:left;background:#0b0a10;border:1px solid va
       <p id="role-hint" style="text-align:center;color:var(--t3);font-size:10px;margin-top:12px">
         ابتدا نقش خود را انتخاب کنید
       </p>
+
+      <!-- راهنمای راه‌اندازی جدول امنیتی — برای مالک -->
+      <details style="margin-top:12px;text-align:right">
+        <summary style="font-size:10px;color:var(--t3);cursor:pointer">🔐 راهنمای امنیتی مالک (جدول app_security)</summary>
+        <div style="font-size:10px;color:var(--t2);line-height:1.9;margin-top:6px">
+          پسوردها در سورس HTML ذخیره نمی‌شوند. اگر ورود ممکن نشد، در Supabase → SQL Editor این اسکریپت را یک‌بار اجرا کن:
+        </div>
+        <pre style="direction:ltr;text-align:left;font-size:9.5px;line-height:1.6;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:8px;padding:8px;margin-top:6px;overflow:auto">create table if not exists app_security (
+  role text primary key,
+  pass_code text not null
+);
+insert into app_security(role,pass_code) values ('admin','CHANGE_ME') on conflict (role) do nothing;
+insert into app_security(role,pass_code) values ('staff','CHANGE_ME') on conflict (role) do nothing;
+-- اگر پسورد فعلی را نمی‌دانی، از این خط استفاده کن:
+update app_security set pass_code='NEW-STRONG-PASS' where role='admin';</pre>
+      </details>
     </div>
 
     <!-- Footer -->
@@ -1640,12 +1791,29 @@ alter table tax_records         add column if not exists branch_id text;</pre>
       </div>
       <div class="card">
         <div class="ct">🔑 تغییر پسوردها</div>
+        <div class="ib info" style="font-size:10.5px">🔐 پسوردها در سورس HTML ذخیره نمی‌شوند؛ فقط در جدول <b>app_security</b> در Supabase نگهداری می‌شوند.</div>
         <div class="fg"><label>پسورد جدید مالک</label><input type="password" id="newAdminPass" placeholder="پسورد جدید..."/></div>
         <button class="btn bpri" style="margin-bottom:12px" onclick="changePass('admin')">ذخیره پسورد مالک ✓</button>
         <div class="dv"></div>
         <div class="fg"><label>پسورد جدید کارمندان (مشترک)</label><input type="password" id="newStaffPass" placeholder="پسورد جدید..."/></div>
         <button class="btn bpri" onclick="changePass('staff')">ذخیره پسورد کارمندان ✓</button>
         <div id="pass-msg" style="margin-top:8px"></div>
+        <details style="margin-top:8px">
+          <summary style="font-size:10.5px;color:var(--t2);cursor:pointer;font-weight:700">🧩 SQL ساخت جدول app_security (یک‌بار اجرا کن)</summary>
+          <pre style="direction:ltr;text-align:left;font-size:9.5px;line-height:1.6;background:rgba(0,0,0,.35);border:1px solid var(--bd);border-radius:8px;padding:10px;margin-top:8px;overflow:auto">create table if not exists app_security (
+  role text primary key,
+  pass_code text not null
+);
+-- مقدار CHANGE_ME را با پسورد قوی عوض کن (یا از همین صفحه تغییر بده)
+insert into app_security(role,pass_code) values ('admin','CHANGE_ME') on conflict (role) do nothing;
+insert into app_security(role,pass_code) values ('staff','CHANGE_ME') on conflict (role) do nothing;
+-- تغییر فوری پسورد از SQL (اگر پسورد فعلی را نمی‌دانی)
+update app_security set pass_code='NEW-STRONG-PASS' where role='admin';
+-- دسترسی با کلید publishable
+alter table app_security enable row level security;
+drop policy if exists app_security_rw on app_security;
+create policy app_security_rw on app_security for all using (true) with check (true);</pre>
+        </details>
       </div>
       <div class="card">
         <div class="ct">👷 حساب سرکاریگران</div>
@@ -3225,6 +3393,8 @@ alter table tax_records         add column if not exists branch_id text;</pre>
 
 <script>
 // ══ ORDERS v2 — چند آیتم ══
+// ⛔ Domain Lock: اگر دامنه مجاز نباشد هیچ کد برنامه اجرا نمی‌شود (نه Supabase، نه داده)
+if(window.__SECURITY_LOCKED__){ throw new Error("SECURITY_LOCK: unauthorized domain — app disabled"); }
 const PRD_NAMES={}; // پیش‌فرض خالی — فهرست جنس‌ها از جدول products خوانده می‌شود
 const PRD_SHORT={استاندارد:"استاندارد",ویژه:"ویژه",کودکانه:"کودکانه"};
 const STATUS_BADGE={
@@ -4105,7 +4275,105 @@ let currentUser=null,selectedRole=null;
 let loginMode="master";
 
 // ── Login ──
-const PASS_DEFAULT={admin:"Admin1234",staff:"Staff1234"};
+// ⚠️ هیچ پسوردی در سورس HTML نیست. پسوردها فقط از جدول app_security در Supabase خوانده/نوشته می‌شوند.
+const APP_SEC_TABLE="app_security";
+const APP_SEC_ROLE_COLS=["role","key","name","username","user_role","type","title"];
+const APP_SEC_PASS_COLS=["password","pass","pass_code","pin","passcode","secret","value"];
+const APP_SEC_ROLE_NAMES={
+  admin:["admin","owner","master","manager","admin_password","مالک","مدیر","مدیر کل"],
+  staff:["staff","employee","user","staff_password","کارمند"]
+};
+
+// درخواست خام و بی‌صدا (بدون اثر روی وضعیت همگام‌سازی) — مخصوص بررسی‌های امنیتی
+async function sbQuiet(table,method,params,body){
+  const url=SB_URL+"/rest/v1/"+table+(params||"");
+  const opts={method:method||"GET",headers:SB_HEADERS};
+  if(body) opts.body=JSON.stringify(body);
+  const ctrl=(typeof AbortController!=="undefined")?new AbortController():null;
+  let timer=null;
+  if(ctrl){ opts.signal=ctrl.signal; timer=setTimeout(()=>{try{ctrl.abort();}catch(e){}},SB_TIMEOUT_MS); }
+  try{
+    const r=await fetch(url,opts);
+    const txt=await r.text();
+    let data=[];
+    try{ data=txt?JSON.parse(txt):[]; }catch(e){ data=[]; }
+    return {ok:r.ok,status:r.status,data,error:r.ok?"":txt};
+  }catch(e){
+    return {ok:false,status:0,data:null,error:String(e&&e.message||e)};
+  }finally{
+    if(timer) clearTimeout(timer);
+  }
+}
+function appSecField(obj,names){
+  if(!obj) return null;
+  for(let i=0;i<names.length;i++){
+    const n=names[i];
+    if(Object.prototype.hasOwnProperty.call(obj,n)&&obj[n]!==null&&obj[n]!==undefined&&String(obj[n])!=="") return obj[n];
+  }
+  return null;
+}
+function appSecRoleMatches(role,list){
+  const r=String(role||"").trim().toLowerCase();
+  return list.indexOf(r)>=0;
+}
+// خواندن پسوردهای مدیر/کارمند از app_security (با تشخیص خودکار نام ستون‌ها)
+async function loadSecurityPasswords(){
+  const out={admin:"",staff:"",roleCol:"role",passCol:"password",tableOk:false,error:""};
+  const res=await sbQuiet(APP_SEC_TABLE,"GET","?select=*",null);
+  if(res.ok&&Array.isArray(res.data)){
+    out.tableOk=true;
+    if(res.data.length){
+      const keys=Object.keys(res.data[0]||{});
+      out.roleCol=APP_SEC_ROLE_COLS.find(c=>keys.indexOf(c)>=0)||out.roleCol;
+      out.passCol=APP_SEC_PASS_COLS.find(c=>keys.indexOf(c)>=0)||out.passCol;
+    }
+    res.data.forEach(row=>{
+      const roleVal=appSecField(row,[out.roleCol].concat(APP_SEC_ROLE_COLS));
+      const passVal=appSecField(row,[out.passCol].concat(APP_SEC_PASS_COLS));
+      if(roleVal===null||passVal===null) return;
+      const pass=String(passVal);
+      if(!pass) return;
+      if(appSecRoleMatches(roleVal,APP_SEC_ROLE_NAMES.admin)&&!out.admin) out.admin=pass;
+      else if(appSecRoleMatches(roleVal,APP_SEC_ROLE_NAMES.staff)&&!out.staff) out.staff=pass;
+    });
+  }else{
+    out.error=res.error||("HTTP "+res.status);
+    console.error("[app_security]",out.error);
+  }
+  // پل مهاجرت: اگر ردیفی در app_security نبود، پسورد قبلیِ settings خوانده می‌شود (هیچ پسورد ثابتی در سورس نیست)
+  if(!out.admin||!out.staff){
+    const legacy=await sbQuiet("settings","GET","?select=key,value&key=in.(pass_admin,pass_staff)",null);
+    if(legacy.ok&&Array.isArray(legacy.data)){
+      legacy.data.forEach(s=>{
+        if(s.key==="pass_admin"&&!out.admin&&s.value) out.admin=String(s.value);
+        if(s.key==="pass_staff"&&!out.staff&&s.value) out.staff=String(s.value);
+      });
+    }
+  }
+  return out;
+}
+// ذخیره پسورد در app_security (اول PATCH؛ اگر ردیف نبود INSERT)
+async function saveSecurityPassword(role,pass){
+  const sec=await loadSecurityPasswords();
+  const roleCol=sec.roleCol||"role";
+  const passCol=sec.passCol||"password";
+  const body={}; body[passCol]=pass;
+  let res=await sbQuiet(APP_SEC_TABLE,"PATCH","?"+roleCol+"=eq."+encodeURIComponent(role),body);
+  if(!res.ok) return {ok:false,error:res.error||("HTTP "+res.status)};
+  if(Array.isArray(res.data)&&res.data.length) return {ok:true};
+  const row={}; row[roleCol]=role; row[passCol]=pass;
+  res=await sbQuiet(APP_SEC_TABLE,"POST","",row);
+  if(!res.ok) return {ok:false,error:res.error||("HTTP "+res.status)};
+  return {ok:true};
+}
+// مقایسه با زمان ثابت (جلوگیری از حدس تدریجی پسورد)
+function safeEqual(a,b){
+  a=String(a); b=String(b);
+  if(a.length!==b.length) return false;
+  let diff=0;
+  for(let i=0;i<a.length;i++) diff|=a.charCodeAt(i)^b.charCodeAt(i);
+  return diff===0;
+}
 // صفحه‌های در دسترس نشست نمایندگی — همه بخش‌ها به‌جز «تنظیمات» (مخصوص مدیر کل)
 const BRANCH_PAGES=["dash","sales","orders","products","buy","prod","batch","stock","cust","collect","supp","cash","assets","report","reports_more","expenses","emp","tax","cheque","partners"];
 
@@ -4162,24 +4430,17 @@ async function doLogin(){
   const loadingEl=document.getElementById("loginLoading");
   loadingEl.style.display="flex";
   document.getElementById("loginErr").style.display="none";
-  // بارگذاری پسوردها از Supabase — با تایم‌اوت ۵ ثانیه‌ای تا اسپینر ورود هرگز گیر نکند
-  let settings=null;
+  // خواندن پسوردها فقط از دیتابیس (جدول app_security) — با تایم‌اوت تا اسپینر ورود گیر نکند
+  let sec=null;
   try{
-    settings=await withTimeout(
-      sbGet("settings","?select=key,value&key=in.(pass_admin,pass_staff)"),
-      LOAD_FALLBACK_MS,"doLogin:settings"
-    );
+    sec=await withTimeout(loadSecurityPasswords(),LOAD_FALLBACK_MS,"doLogin:app_security");
   }catch(e){
-    console.error("[doLogin] ❌ settings:",e&&(e.stack||e.message)||e);
+    console.error("[doLogin] ❌ app_security:",e&&(e.stack||e.message)||e);
   }finally{
     loadingEl.style.display="none";
   }
-  let correctPass=PASS_DEFAULT[selectedRole];
-  if(Array.isArray(settings)){
-    const row=settings.find(s=>s.key===(selectedRole==="admin"?"pass_admin":"pass_staff"));
-    if(row&&row.value) correctPass=row.value;
-  }
-  if(p===correctPass){
+  const correctPass=sec?String(sec[selectedRole]||""):"";
+  if(correctPass&&safeEqual(p,correctPass)){
     // مدیر کل → حالت تجمیعی (همه نمایندگی‌ها)
     currentBranch={id:null,name:"همه نمایندگی‌ها (تجمیعی)",locked:false};
     try{ await loadBranches(true); }catch(e){}
@@ -4195,7 +4456,11 @@ async function doLogin(){
     };
     startSession();
   } else {
-    showLoginErr("پسورد اشتباه است");
+    if(!correctPass){
+      showLoginErr("پسورد این نقش در جدول «app_security» تنظیم نشده — مالک باید در Supabase یک ردیف برای آن بسازد (SQL راهنما در پایین همین صفحه)");
+    } else {
+      showLoginErr("پسورد اشتباه است");
+    }
     document.getElementById("loginPass").value="";
   }
 }
@@ -6059,17 +6324,18 @@ async function changePass(type){
   const msgEl=document.getElementById("pass-msg");
   const np=inp.value.trim();
   if(np.length<4){msgEl.innerHTML='<div class="ib err">پسورد حداقل ۴ حرف باشد</div>';return;}
-  const key=type==="admin"?"pass_admin":"pass_staff";
+  const role=type==="admin"?"admin":"staff";
   window._lastSBError=null;
-  // اگر ردیف این کلید در settings نباشد، PATCH صفر ردیف برمی‌گرداند → باید INSERT شود
-  const res=await sbPatch("settings",{value:np,updated_at:new Date().toISOString()},`?key=eq.${key}`);
-  if(res===null){ msgEl.innerHTML=sbErrorHTML("خطا در ذخیره پسورد"); return; }
-  if(Array.isArray(res)&&res.length===0){
-    const ins=await sbPost("settings",{key,value:np});
-    if(ins===null){ msgEl.innerHTML=sbErrorHTML("خطا در ذخیره پسورد"); return; }
+  msgEl.innerHTML='<div class="ib info">در حال ذخیره در جدول app_security...</div>';
+  const res=await saveSecurityPassword(role,np);
+  if(!res.ok){
+    window._lastSBError=res.error||"";
+    msgEl.innerHTML=sbErrorHTML("خطا در ذخیره پسورد در جدول app_security")
+      +'<div class="ib warn" style="font-size:10.5px;margin-top:6px">اگر جدول «app_security» ساخته نشده، اسکریپت SQL پایین همین کارت را در Supabase اجرا کن.</div>';
+    return;
   }
   inp.value="";
-  msgEl.innerHTML='<div class="ib ok">✅ پسورد در Supabase ذخیره شد!</div>';
+  msgEl.innerHTML='<div class="ib ok">✅ پسورد در جدول app_security ذخیره شد!</div>';
   setTimeout(()=>{msgEl.innerHTML="";},2500);
 }
 
@@ -12039,6 +12305,8 @@ document.addEventListener('input',function(e){
 document.addEventListener("keydown",e=>{
   const loginEl=document.getElementById("loginPage");
   if(e.key!=="Enter"||!loginEl||loginEl.style.display==="none") return;
+  // این دو فیلد خودشان onkeydown دارند؛ اجرای دوباره باعث ورود هم‌زمان/دوبار می‌شود
+  if(e.target&&/^(loginPass|loginBranchPass)$/.test(e.target.id||"")) return;
   if(loginMode==="branch") doBranchLogin(); else doLogin();
 });
 
